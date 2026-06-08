@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Adventures — ChalO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand:      #FF6B2B;
+            --brand-dark: #E55A1A;
+            --brand-soft: #FFF1EA;
+            --brand-glow: rgba(255, 107, 43, 0.25);
+            --ink:        #111827;
+            --muted:      #6B7280;
+            --line:       #ECECEC;
+            --bg:         #FAFAFA;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        a { text-decoration: none; }
+
+        /* ── Header ───────────────────────────────────────────────────────── */
+        .app-header {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header .inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand { display: inline-flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
+
+        .brand .logo-mark {
+            width: 36px; height: 36px;
+            background: var(--brand);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem;
+            box-shadow: 0 4px 12px var(--brand-glow);
+        }
+
+        .brand .logo-name { font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; }
+
+        .header-spacer { flex: 1; }
+        .header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+        .btn-ghost {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            height: 42px; padding: 0 0.95rem;
+            border: 1px solid var(--line); border-radius: 100px;
+            background: #fff; color: var(--ink);
+            font-size: 0.875rem; font-weight: 600;
+            transition: box-shadow 0.18s, border-color 0.18s;
+        }
+
+        .btn-ghost:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); border-color: #DADADA; color: var(--ink); }
+
+        .btn-brand {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            height: 42px; padding: 0 1.1rem;
+            border: none; border-radius: 100px;
+            background: #FF6B2B; background: var(--brand);
+            color: #fff; font-size: 0.875rem; font-weight: 600;
+            box-shadow: 0 4px 14px var(--brand-glow);
+            transition: background 0.18s, transform 0.1s;
+        }
+
+        .btn-brand:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+
+        .profile-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            height: 42px; padding: 0 0.35rem 0 0.85rem;
+            border: 1px solid var(--line); border-radius: 100px;
+            background: #fff; color: var(--ink); font-weight: 600; font-size: 0.875rem;
+        }
+
+        .profile-btn:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); color: var(--ink); }
+
+        .avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+        }
+
+        .dropdown-menu {
+            border: 1px solid var(--line); border-radius: 14px;
+            box-shadow: 0 12px 34px rgba(0,0,0,0.12);
+            padding: 0.4rem; min-width: 210px;
+        }
+
+        .dropdown-item {
+            border-radius: 9px; padding: 0.6rem 0.7rem;
+            font-size: 0.9rem; font-weight: 500;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+
+        .dropdown-item i { color: var(--muted); width: 18px; }
+
+        /* ── Filter bar ────────────────────────────────────────────────────── */
+        .filter-section {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            padding: 1.1rem 0;
+        }
+
+        .filter-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 1.25rem;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .filter-label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            color: var(--muted);
+            margin-bottom: 0.6rem;
+        }
+
+        /* Light-theme chips (white background context) */
+        .chip { position: relative; }
+
+        .chip input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+
+        .chip label {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.45rem 0.85rem; border-radius: 100px;
+            border: 1.5px solid #E5E7EB; background: #fff;
+            color: #374151; font-size: 0.82rem; font-weight: 600;
+            cursor: pointer; transition: all 0.16s; user-select: none;
+        }
+
+        .chip label:hover { border-color: var(--brand); color: var(--brand); }
+
+        .chip input:checked + label {
+            background: var(--brand-soft);
+            border-color: var(--brand);
+            color: var(--brand);
+            box-shadow: 0 2px 8px var(--brand-glow);
+        }
+
+        .chip .chip-emoji { font-size: 0.9rem; line-height: 1; }
+        .chip-icon { font-size: 0.88rem; line-height: 1; }
+
+        .chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Location + search row */
+        .search-row {
+            display: flex;
+            gap: 0.7rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .location-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .location-wrap .loc-icon {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+
+        .location-input {
+            width: 100%;
+            height: 46px;
+            padding: 0 1rem 0 2.5rem;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 0.92rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .location-input:focus { border-color: var(--brand); }
+        .location-input::placeholder { color: #9CA3AF; }
+
+        .btn-search {
+            height: 46px;
+            padding: 0 1.4rem;
+            border: none;
+            border-radius: 10px;
+            background: #FF6B2B;
+            background: var(--brand);
+            color: #fff;
+            font-size: 0.88rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            box-shadow: 0 4px 14px var(--brand-glow);
+            transition: background 0.18s, transform 0.1s;
+            white-space: nowrap;
+        }
+
+        .btn-search:hover { background: var(--brand-dark); transform: translateY(-1px); }
+
+        .clear-link {
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--muted);
+            white-space: nowrap;
+            transition: color 0.15s;
+        }
+
+        .clear-link:hover { color: var(--ink); }
+
+        /* ── Page body ─────────────────────────────────────────────────────── */
+        .container-app {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 1.75rem 1.25rem 4rem;
+        }
+
+        /* ── Results meta ──────────────────────────────────────────────────── */
+        .results-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-count {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            color: var(--ink);
+            flex-shrink: 0;
+        }
+
+        .active-tag {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-size: 0.78rem; font-weight: 600;
+            color: var(--brand); background: var(--brand-soft);
+            padding: 0.25rem 0.65rem; border-radius: 100px;
+        }
+
+        .active-tag .emoji { font-size: 0.88rem; }
+
+        /* ── Adventure cards ───────────────────────────────────────────────── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.4rem;
+        }
+
+        .adv-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s, transform 0.15s;
+        }
+
+        .adv-card:hover {
+            box-shadow: 0 14px 34px rgba(0,0,0,0.10);
+            transform: translateY(-3px);
+        }
+
+        .adv-cover {
+            position: relative;
+            aspect-ratio: 3 / 2;
+            background: #EEE;
+            overflow: hidden;
+        }
+
+        .adv-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .adv-cover-placeholder {
+            width: 100%; height: 100%;
+            background: linear-gradient(145deg, #0D1B2A 0%, #162032 40%, #1D3545 70%, #12263A 100%);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 0.5rem;
+            position: relative; overflow: hidden;
+        }
+
+        /* Mountain silhouette */
+        .adv-cover-placeholder::before {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 44%;
+            background: rgba(255,107,43,0.08);
+            clip-path: polygon(0% 100%, 12% 60%, 25% 78%, 40% 38%, 55% 62%, 70% 28%, 85% 52%, 100% 35%, 100% 100%);
+        }
+
+        /* Warm glow accent top-right */
+        .adv-cover-placeholder::after {
+            content: '';
+            position: absolute; top: -40px; right: -40px;
+            width: 130px; height: 130px;
+            background: radial-gradient(circle, rgba(255,107,43,0.18) 0%, transparent 65%);
+            border-radius: 50%;
+        }
+
+        .placeholder-icon {
+            position: relative; z-index: 1;
+            color: rgba(255,107,43,0.65); font-size: 2.2rem;
+        }
+
+        .placeholder-label {
+            position: relative; z-index: 1;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.68rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+
+        .adv-date-badge {
+            position: absolute;
+            top: 0.7rem; left: 0.7rem;
+            background: rgba(255,255,255,0.95);
+            color: var(--ink);
+            font-size: 0.7rem; font-weight: 700;
+            padding: 0.3rem 0.6rem; border-radius: 100px;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        .adv-body {
+            padding: 0.95rem 1rem 1.05rem;
+            display: flex; flex-direction: column; flex: 1;
+        }
+
+        .adv-title {
+            font-size: 1rem; font-weight: 700;
+            color: var(--ink); line-height: 1.3;
+            margin-bottom: 0.5rem;
+        }
+
+        .adv-meta {
+            display: flex; align-items: center; gap: 0.35rem;
+            font-size: 0.82rem; color: var(--muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .adv-meta i { color: var(--brand); font-size: 0.85rem; width: 14px; }
+
+        .adv-host {
+            display: flex; align-items: center; gap: 0.45rem;
+            font-size: 0.82rem; color: var(--muted);
+            margin-top: 0.2rem; margin-bottom: 0.75rem;
+        }
+
+        .host-avatar {
+            width: 22px; height: 22px; border-radius: 50%;
+            background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.67rem; font-weight: 700; flex-shrink: 0;
+        }
+
+        .adv-tags {
+            display: flex; flex-wrap: wrap; gap: 0.35rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .adv-tag {
+            font-size: 0.72rem; font-weight: 600;
+            color: var(--brand); background: var(--brand-soft);
+            padding: 0.25rem 0.6rem; border-radius: 100px;
+        }
+
+        .adv-actions { margin-top: auto; }
+
+        .btn-view {
+            display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+            width: 100%; height: 40px; border-radius: 10px;
+            border: none; background: var(--brand-soft); color: var(--brand);
+            font-size: 0.84rem; font-weight: 700; font-family: inherit;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .btn-view:hover { background: var(--brand); color: #fff; }
+
+        /* ── Empty state ───────────────────────────────────────────────────── */
+        .empty-state {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 80px; height: 80px; margin: 0 auto 1.35rem;
+            border-radius: 22px; background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center; font-size: 2.2rem;
+        }
+
+        .empty-title {
+            font-size: 1.45rem; font-weight: 800; letter-spacing: -0.5px;
+            margin-bottom: 0.55rem;
+        }
+
+        .empty-sub {
+            color: var(--muted); font-size: 0.95rem; max-width: 400px;
+            margin: 0 auto 1.75rem;
+        }
+
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            height: 48px; padding: 0 1.6rem; border-radius: 12px;
+            background: #FF6B2B; background: var(--brand); color: #fff;
+            font-weight: 700; font-size: 0.95rem;
+            box-shadow: 0 4px 16px var(--brand-glow);
+            transition: background 0.18s, transform 0.1s;
+        }
+
+        .btn-back:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+
+        /* ── Responsive ────────────────────────────────────────────────────── */
+        @media (max-width: 900px) {
+            .card-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .card-grid { grid-template-columns: 1fr; }
+            .header-actions .label-hide { display: none; }
+            .btn-ghost { padding: 0 0.75rem; }
+            .btn-brand { padding: 0 0.85rem; }
+            .btn-search { width: 100%; justify-content: center; }
+            .search-row { flex-direction: column; align-items: stretch; }
+            .location-wrap { min-width: unset; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Header ───────────────────────────────────────────────────────── -->
+    <header class="app-header">
+        <div class="inner">
+
+            <a th:href="@{/dashboard}" class="brand">
+                <span class="logo-mark"><i class="bi bi-compass-fill"></i></span>
+                <span class="logo-name">ChalO</span>
+            </a>
+
+            <div class="header-spacer"></div>
+
+            <!-- Logged-in header actions -->
+            <div class="header-actions" th:if="${userName != null}">
+
+                <a th:href="@{/dashboard}" class="btn-ghost">
+                    <i class="bi bi-grid"></i>
+                    <span class="label-hide">Dashboard</span>
+                </a>
+
+                <a th:href="@{/adventures/new}" class="btn-brand">
+                    <i class="bi bi-plus-lg"></i>
+                    <span class="label-hide">Host Adventure</span>
+                </a>
+
+                <div class="dropdown">
+                    <button class="profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar" th:text="${#strings.substring(userName, 0, 1).toUpperCase()}">A</span>
+                        <i class="bi bi-chevron-down" style="font-size:0.7rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <span class="dropdown-item-text px-2 py-1">
+                                <small class="text-muted">Signed in as</small><br>
+                                <strong th:text="${userName}">Explorer</strong>
+                            </span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><a class="dropdown-item" th:href="@{/my-adventures}"><i class="bi bi-backpack2"></i> My Adventures</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right text-danger"></i> Log out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Anonymous header actions -->
+            <div class="header-actions" th:unless="${userName != null}">
+                <a th:href="@{/login}" class="btn-ghost">Log in</a>
+                <a th:href="@{/register}" class="btn-brand">Sign up free</a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ── Filter Bar ────────────────────────────────────────────────────── -->
+    <section class="filter-section">
+        <div class="filter-inner">
+            <form method="get" th:action="@{/explore}">
+
+                <!-- Interest chips -->
+                <span class="filter-label">Filter by interest</span>
+                <div class="chip-row">
+                    <div class="chip" th:each="tag : ${allTags}">
+                        <input type="checkbox"
+                               th:id="${'f-' + tag.slug}"
+                               name="tags"
+                               th:value="${tag.slug}"
+                               th:checked="${searchTags.contains(tag.slug)}">
+                        <label th:for="${'f-' + tag.slug}">
+                            <i th:class="${'chip-icon ' + tag.icon}"></i>
+                            <span th:text="${tag.name}">Trekking</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Location + Search row -->
+                <div class="search-row">
+                    <div class="location-wrap">
+                        <i class="bi bi-geo-alt loc-icon"></i>
+                        <input type="text"
+                               name="location"
+                               class="location-input"
+                               th:value="${searchLocation}"
+                               placeholder="Filter by destination…"
+                               autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn-search">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                    <a th:href="@{/explore}"
+                       class="clear-link"
+                       th:if="${!searchTags.empty or !searchLocation.empty}">
+                        Clear all
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </section>
+
+    <!-- ── Results ───────────────────────────────────────────────────────── -->
+    <div class="container-app">
+
+        <!-- Results meta: count + active filter chips -->
+        <div class="results-meta">
+            <span class="results-count"
+                  th:text="${adventures.size() + ' adventure' + (adventures.size() == 1 ? '' : 's') + ' found'}">
+                0 adventures found
+            </span>
+            <span class="active-tag" th:each="t : ${selectedTags}">
+                <i th:class="${t.icon}" style="font-size:0.88rem;"></i>
+                <span th:text="${t.name}">Tag</span>
+            </span>
+        </div>
+
+        <!-- ── Card Grid ──────────────────────────────────────────────────── -->
+        <div class="card-grid" th:if="${!adventures.empty}">
+            <article class="adv-card" th:each="adv : ${adventures}">
+
+                <!-- Cover image or branded placeholder -->
+                <div class="adv-cover">
+                    <img th:if="${adv.coverImageUrl}" th:src="${adv.coverImageUrl}"
+                         alt="" loading="lazy"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                    <div class="adv-cover-placeholder"
+                         th:style="${adv.coverImageUrl} ? 'display:none' : ''">
+                        <i class="bi bi-compass-fill placeholder-icon"></i>
+                        <span class="placeholder-label">ChalO</span>
+                    </div>
+                    <span class="adv-date-badge">
+                        <i class="bi bi-calendar-event"></i>
+                        <span th:text="${#temporals.format(adv.adventureDate, 'EEE, dd MMM yyyy')}">Sat, 14 Jun 2026</span>
+                    </span>
+                </div>
+
+                <!-- Card body -->
+                <div class="adv-body">
+
+                    <h3 class="adv-title" th:text="${adv.title}">Adventure Title</h3>
+
+                    <div class="adv-meta">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span th:text="${adv.locationName} ?: 'Location TBD'">Location</span>
+                    </div>
+
+                    <div class="adv-meta">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Up to <strong th:text="${adv.maxParticipants}">8</strong> adventurers</span>
+                    </div>
+
+                    <div class="adv-host">
+                        <span class="host-avatar"
+                              th:text="${#strings.substring(adv.host.name, 0, 1).toUpperCase()}">A</span>
+                        <span>Hosted by <strong th:text="${adv.host.name}">Host</strong></span>
+                    </div>
+
+                    <div class="adv-tags" th:if="${!adv.tags.empty}">
+                        <span class="adv-tag" th:each="t : ${adv.tags}" th:text="${t.name}">Tag</span>
+                    </div>
+
+                    <div class="adv-actions">
+                        <a class="btn-view" th:href="@{/adventures/{id}(id=${adv.id})}">
+                            <i class="bi bi-arrow-right-circle"></i> View Adventure
+                        </a>
+                    </div>
+
+                </div>
+            </article>
+        </div>
+
+        <!-- ── Empty State ────────────────────────────────────────────────── -->
+        <div class="empty-state" th:if="${adventures.empty}">
+            <div class="empty-icon"><i class="bi bi-binoculars"></i></div>
+            <h2 class="empty-title">No adventures found.</h2>
+            <p class="empty-sub">
+                Try selecting different interests, changing the location, or clearing all filters
+                to see everything available.
+            </p>
+            <a th:href="@{/explore}" class="btn-back">
+                <i class="bi bi-x-circle"></i> Clear Filters
+            </a>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

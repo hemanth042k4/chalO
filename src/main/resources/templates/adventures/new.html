@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Host an Adventure — ChalO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand:       #FF6B2B;
+            --brand-dark:  #E55A1A;
+            --brand-soft:  #FFF1EA;
+            --brand-glow:  rgba(255, 107, 43, 0.25);
+            --ink:         #111827;
+            --muted:       #6B7280;
+            --line:        #ECECEC;
+            --bg:          #FAFAFA;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        a { text-decoration: none; }
+
+        /* ── Header (consistent with dashboard) ───────────────────────── */
+        .app-header {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header .inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            flex-shrink: 0;
+        }
+
+        .brand .logo-mark {
+            width: 36px;
+            height: 36px;
+            background: var(--brand);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px var(--brand-glow);
+        }
+
+        .brand .logo-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -0.4px;
+        }
+
+        .header-spacer { flex: 1; }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            height: 42px;
+            padding: 0 0.95rem;
+            border: 1px solid var(--line);
+            border-radius: 100px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: box-shadow 0.18s, border-color 0.18s;
+        }
+
+        .btn-back:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); border-color: #DADADA; color: var(--ink); }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--brand-soft);
+            color: var(--brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Page container ───────────────────────────────────────────── */
+        .container-form {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 4rem;
+        }
+
+        .page-head { margin-bottom: 1.75rem; }
+
+        .page-eyebrow {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--brand);
+            margin-bottom: 0.4rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+            margin-bottom: 0.35rem;
+        }
+
+        .page-sub { color: var(--muted); font-size: 0.95rem; }
+
+        /* ── Form card ────────────────────────────────────────────────── */
+        .form-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 1.9rem;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.04);
+        }
+
+        .form-section + .form-section {
+            margin-top: 1.6rem;
+            padding-top: 1.6rem;
+            border-top: 1px solid var(--line);
+        }
+
+        .field { margin-bottom: 1.25rem; }
+        .field:last-child { margin-bottom: 0; }
+
+        .field-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .field-label .req { color: var(--brand); }
+        .field-hint { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+
+        .ctrl {
+            width: 100%;
+            min-height: 48px;
+            padding: 0.7rem 0.95rem;
+            border: 1.5px solid #C9CDD4;
+            border-radius: 11px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.16s, box-shadow 0.16s;
+        }
+
+        textarea.ctrl { min-height: 120px; resize: vertical; line-height: 1.5; }
+
+        .ctrl::placeholder { color: #9CA3AF; }
+
+        .ctrl:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(255,107,43,0.13);
+        }
+
+        .ctrl.is-invalid { border-color: #EF4444; }
+        .ctrl.is-invalid:focus { box-shadow: 0 0 0 3px rgba(239,68,68,0.14); }
+
+        .field-error {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.4rem;
+            font-size: 0.8rem;
+            color: #DC2626;
+            font-weight: 500;
+        }
+
+        .field-error i { font-size: 0.72rem; }
+
+        /* Two-column row */
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        /* Section heading inside card */
+        .sec-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .sec-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; }
+
+        /* ── Interest chips (light theme) ─────────────────────────────── */
+        .chip-grid { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+
+        .chip { position: relative; }
+
+        .chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+        .chip label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 0.95rem;
+            border-radius: 100px;
+            border: 1.5px solid #DADCE0;
+            background: #fff;
+            color: #374151;
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .chip label:hover { border-color: var(--brand); color: var(--brand); }
+
+        .chip input:checked + label {
+            background: var(--brand);
+            border-color: var(--brand);
+            color: #fff;
+            box-shadow: 0 4px 12px var(--brand-glow);
+        }
+
+        .chip .chip-icon { font-size: 1rem; flex-shrink: 0; line-height: 1; }
+
+        /* ── Photo URL rows ───────────────────────────────────────────── */
+        .photo-row { display: flex; gap: 0.6rem; margin-bottom: 0.6rem; }
+        .photo-row .ctrl { min-height: 46px; }
+
+        .btn-icon {
+            flex-shrink: 0;
+            width: 46px;
+            height: 46px;
+            border: 1.5px solid #DADCE0;
+            border-radius: 11px;
+            background: #fff;
+            color: var(--muted);
+            font-size: 1.05rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .btn-icon:hover { border-color: #EF4444; color: #EF4444; }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.3rem;
+            padding: 0.5rem 0.9rem;
+            border: 1.5px dashed #C9CDD4;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-add:hover { border-color: var(--brand); color: var(--brand); }
+
+        /* ── Submit bar ───────────────────────────────────────────────── */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1.75rem;
+        }
+
+        .btn-cancel {
+            height: 50px;
+            padding: 0 1.4rem;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--ink);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-cancel:hover { background: #F7F7F7; color: var(--ink); }
+
+        .btn-submit {
+            height: 50px;
+            padding: 0 1.8rem;
+            border: none;
+            border-radius: 12px;
+            background: #FF6B2B;
+            background: var(--brand);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 16px var(--brand-glow);
+            transition: background 0.18s, transform 0.1s;
+        }
+
+        .btn-submit:hover { background: var(--brand-dark); transform: translateY(-1px); }
+
+        /* Error summary banner */
+        .form-alert {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            background: #FEF2F2;
+            color: #B91C1C;
+            border-radius: 11px;
+            padding: 0.8rem 1rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 1.4rem;
+        }
+
+        /* ── Responsive ───────────────────────────────────────────────── */
+        @media (max-width: 600px) {
+            .field-row { grid-template-columns: 1fr; }
+            .form-card { padding: 1.4rem; }
+            .page-title { font-size: 1.6rem; }
+            .form-actions { flex-direction: column-reverse; }
+            .btn-cancel, .btn-submit { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Header ───────────────────────────────────────────────────────── -->
+    <header class="app-header">
+        <div class="inner">
+            <a th:href="@{/dashboard}" class="brand">
+                <span class="logo-mark"><i class="bi bi-compass-fill"></i></span>
+                <span class="logo-name">ChalO</span>
+            </a>
+            <div class="header-spacer"></div>
+            <a th:href="@{/dashboard}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Dashboard
+            </a>
+            <span class="avatar" th:text="${#strings.substring(userName, 0, 1).toUpperCase()}">A</span>
+        </div>
+    </header>
+
+    <!-- ── Form ─────────────────────────────────────────────────────────── -->
+    <div class="container-form">
+
+        <div class="page-head">
+            <p class="page-eyebrow">Host an adventure</p>
+            <h1 class="page-title">Create your experience</h1>
+            <p class="page-sub">Share where you're going and let fellow explorers join in.</p>
+        </div>
+
+        <!--
+            Posts to /adventures (create). th:action injects the CSRF token.
+            th:object binds to the AdventureForm added by AdventureController.
+        -->
+        <form th:action="@{/adventures}" th:object="${form}" method="post" novalidate>
+
+            <!-- Top-level error summary -->
+            <div th:if="${#fields.hasAnyErrors()}" class="form-alert" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>Please fix the highlighted fields below.</span>
+            </div>
+
+            <div class="form-card">
+
+                <!-- ── Basics ──────────────────────────────────────────── -->
+                <div class="form-section">
+
+                    <!-- Title -->
+                    <div class="field">
+                        <label for="title" class="field-label">Adventure Title <span class="req">*</span></label>
+                        <input type="text" id="title" th:field="*{title}"
+                               class="ctrl" th:classappend="${#fields.hasErrors('title')} ? ' is-invalid'"
+                               placeholder="e.g. Sunrise Trek to Kumara Parvatha" maxlength="150">
+                        <div th:if="${#fields.hasErrors('title')}" class="field-error">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            <span th:errors="*{title}">Title error</span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="field">
+                        <label for="description" class="field-label">Description <span class="req">*</span></label>
+                        <textarea id="description" th:field="*{description}"
+                                  class="ctrl" th:classappend="${#fields.hasErrors('description')} ? ' is-invalid'"
+                                  placeholder="What's the plan? Meeting point, difficulty, what to carry…"></textarea>
+                        <div th:if="${#fields.hasErrors('description')}" class="field-error">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            <span th:errors="*{description}">Description error</span>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="field">
+                        <label for="location" class="field-label">Location <span class="req">*</span></label>
+                        <input type="text" id="location" th:field="*{location}"
+                               class="ctrl" th:classappend="${#fields.hasErrors('location')} ? ' is-invalid'"
+                               placeholder="e.g. Kukke Subramanya, Karnataka" maxlength="255">
+                        <div th:if="${#fields.hasErrors('location')}" class="field-error">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            <span th:errors="*{location}">Location error</span>
+                        </div>
+                    </div>
+
+                    <!-- Date + Slots -->
+                    <div class="field-row">
+                        <div class="field" style="margin-bottom:0;">
+                            <label for="adventureDate" class="field-label">Adventure Date <span class="req">*</span></label>
+                            <input type="date" id="adventureDate" th:field="*{adventureDate}"
+                                   class="ctrl" th:classappend="${#fields.hasErrors('adventureDate')} ? ' is-invalid'"
+                                   th:min="${today}">
+                            <div th:if="${#fields.hasErrors('adventureDate')}" class="field-error">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                                <span th:errors="*{adventureDate}">Date error</span>
+                            </div>
+                        </div>
+                        <div class="field" style="margin-bottom:0;">
+                            <label for="availableSlots" class="field-label">Available Slots <span class="req">*</span></label>
+                            <input type="number" id="availableSlots" th:field="*{availableSlots}"
+                                   class="ctrl" th:classappend="${#fields.hasErrors('availableSlots')} ? ' is-invalid'"
+                                   placeholder="e.g. 8" min="1" max="1000">
+                            <div th:if="${#fields.hasErrors('availableSlots')}" class="field-error">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                                <span th:errors="*{availableSlots}">Slots error</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Interests ───────────────────────────────────────── -->
+                <div class="form-section">
+                    <h2 class="sec-title">Adventure Interests <span class="req" style="color:var(--brand)">*</span></h2>
+                    <p class="sec-desc">Pick the tags that describe your adventure. Select at least one.</p>
+
+                    <div class="chip-grid">
+                        <div class="chip" th:each="tag : ${allTags}">
+                            <input type="checkbox"
+                                   th:id="${'tag-' + tag.id}"
+                                   name="tagIds"
+                                   th:value="${tag.id}"
+                                   th:checked="${form.tagIds != null and #lists.contains(form.tagIds, tag.id)}">
+                            <label th:for="${'tag-' + tag.id}">
+                                <i th:class="${'chip-icon ' + tag.icon}"></i>
+                                <span th:text="${tag.name}">Trekking</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div th:if="${#fields.hasErrors('tagIds')}" class="field-error">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span th:errors="*{tagIds}">Tag error</span>
+                    </div>
+                </div>
+
+                <!-- ── Photos ──────────────────────────────────────────── -->
+                <div class="form-section">
+                    <h2 class="sec-title">Photos</h2>
+                    <p class="sec-desc">Paste image URLs. The first one becomes your cover image. (Optional)</p>
+
+                    <div id="photoList">
+                        <div class="photo-row" th:each="url,iter : *{photoUrls}">
+                            <input type="url" name="photoUrls" th:value="${url}"
+                                   class="ctrl" placeholder="https://images.example.com/photo.jpg">
+                            <button type="button" class="btn-icon" onclick="removePhotoRow(this)" title="Remove">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-add" onclick="addPhotoRow()">
+                        <i class="bi bi-plus-lg"></i> Add another photo
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- ── Actions ─────────────────────────────────────────────── -->
+            <div class="form-actions">
+                <a th:href="@{/dashboard}" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn-submit">
+                    <i class="bi bi-rocket-takeoff"></i> Publish Adventure
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Append a new empty photo URL input row
+        function addPhotoRow() {
+            const list = document.getElementById('photoList');
+            const row = document.createElement('div');
+            row.className = 'photo-row';
+            row.innerHTML =
+                '<input type="url" name="photoUrls" class="ctrl" placeholder="https://images.example.com/photo.jpg">' +
+                '<button type="button" class="btn-icon" onclick="removePhotoRow(this)" title="Remove"><i class="bi bi-x-lg"></i></button>';
+            list.appendChild(row);
+        }
+
+        // Remove a photo row, always keeping at least one
+        function removePhotoRow(btn) {
+            const list = document.getElementById('photoList');
+            if (list.querySelectorAll('.photo-row').length > 1) {
+                btn.closest('.photo-row').remove();
+            } else {
+                btn.closest('.photo-row').querySelector('input').value = '';
+            }
+        }
+    </script>
+</body>
+</html>

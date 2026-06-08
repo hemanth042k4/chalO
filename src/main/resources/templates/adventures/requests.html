@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Requests — ' + ${adventure.title} + ' — ChalO'">Requests — ChalO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand:      #FF6B2B;
+            --brand-dark: #E55A1A;
+            --brand-soft: #FFF1EA;
+            --brand-glow: rgba(255, 107, 43, 0.25);
+            --ink:        #111827;
+            --muted:      #6B7280;
+            --line:       #ECECEC;
+            --bg:         #FAFAFA;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        a { text-decoration: none; }
+
+        /* ── Header ───────────────────────────────────────────────────────── */
+        .app-header {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header .inner {
+            max-width: 1180px; margin: 0 auto;
+            padding: 0.75rem 1.25rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+
+        .brand { display: inline-flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
+
+        .brand .logo-mark {
+            width: 36px; height: 36px; background: var(--brand); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem; box-shadow: 0 4px 12px var(--brand-glow);
+        }
+
+        .brand .logo-name { font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; }
+
+        .header-spacer { flex: 1; }
+        .header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+        .btn-ghost {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            height: 42px; padding: 0 0.95rem;
+            border: 1px solid var(--line); border-radius: 100px;
+            background: #fff; color: var(--ink); font-size: 0.875rem; font-weight: 600;
+            transition: box-shadow 0.18s, border-color 0.18s;
+        }
+
+        .btn-ghost:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); border-color: #DADADA; color: var(--ink); }
+
+        .btn-brand {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            height: 42px; padding: 0 1.1rem; border: none; border-radius: 100px;
+            background: var(--brand); color: #fff; font-size: 0.875rem; font-weight: 600;
+            box-shadow: 0 4px 14px var(--brand-glow); transition: background 0.18s, transform 0.1s;
+        }
+
+        .btn-brand:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+
+        .profile-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            height: 42px; padding: 0 0.35rem 0 0.85rem;
+            border: 1px solid var(--line); border-radius: 100px;
+            background: #fff; color: var(--ink); font-weight: 600; font-size: 0.875rem;
+        }
+
+        .profile-btn:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); color: var(--ink); }
+
+        .avatar-sm {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+        }
+
+        .dropdown-menu {
+            border: 1px solid var(--line); border-radius: 14px;
+            box-shadow: 0 12px 34px rgba(0,0,0,0.12);
+            padding: 0.4rem; min-width: 210px;
+        }
+
+        .dropdown-item {
+            border-radius: 9px; padding: 0.6rem 0.7rem;
+            font-size: 0.9rem; font-weight: 500;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+
+        .dropdown-item i { color: var(--muted); width: 18px; }
+
+        /* ── Page banner ──────────────────────────────────────────────────── */
+        .page-banner {
+            background: linear-gradient(135deg, #11202E 0%, #1a3a50 100%);
+            padding: 2.5rem 1.25rem 2rem;
+        }
+
+        .page-banner-inner {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.82rem; font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 1rem;
+            transition: color 0.15s;
+        }
+
+        .back-link:hover { color: #fff; }
+
+        .page-title {
+            font-size: 1.9rem; font-weight: 800; color: #fff;
+            letter-spacing: -0.6px; margin-bottom: 0.35rem;
+        }
+
+        .page-subtitle {
+            font-size: 0.9rem; color: rgba(255,255,255,0.6);
+            font-weight: 500; margin: 0;
+        }
+
+        .btn-banner {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            margin-top: 1rem;
+            height: 38px; padding: 0 1.1rem;
+            border: 1.5px solid rgba(255,255,255,0.3); border-radius: 10px;
+            background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9);
+            font-size: 0.82rem; font-weight: 600;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .btn-banner:hover {
+            border-color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+
+        /* ── Main container ───────────────────────────────────────────────── */
+        .container-main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 4rem;
+        }
+
+        /* ── Stats strip ──────────────────────────────────────────────────── */
+        .stats-strip {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 0.9rem 1.4rem;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .stat-number {
+            font-size: 1.75rem; font-weight: 800;
+            color: var(--brand); line-height: 1;
+            display: block; margin-bottom: 0.25rem;
+        }
+
+        .stat-number.muted { color: var(--ink); }
+
+        .stat-label {
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--muted); display: block;
+        }
+
+        /* ── Flash messages ───────────────────────────────────────────────── */
+        .flash-success {
+            background: #DCFCE7; border: 1px solid #BBF7D0;
+            border-radius: 12px; padding: 0.9rem 1.2rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .flash-success i { color: #15803D; font-size: 1.15rem; flex-shrink: 0; }
+        .flash-success span { font-size: 0.9rem; font-weight: 600; color: #14532D; }
+
+        .flash-error {
+            background: #FEE2E2; border: 1px solid #FECACA;
+            border-radius: 12px; padding: 0.9rem 1.2rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .flash-error i { color: #B91C1C; font-size: 1.15rem; flex-shrink: 0; }
+        .flash-error span { font-size: 0.9rem; font-weight: 600; color: #7F1D1D; }
+
+        /* ── Request card ─────────────────────────────────────────────────── */
+        .request-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 1.35rem 1.5rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.2s;
+        }
+
+        .request-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.07); }
+
+        .card-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .requester-avatar {
+            width: 46px; height: 46px; border-radius: 50%;
+            background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 800; flex-shrink: 0;
+        }
+
+        .requester-info { flex: 1; min-width: 0; }
+
+        .requester-name {
+            font-size: 1rem; font-weight: 700; color: var(--ink);
+            margin-bottom: 0.2rem;
+        }
+
+        .requester-date {
+            font-size: 0.78rem; color: var(--muted); font-weight: 500;
+        }
+
+        /* Status badge */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            padding: 0.3rem 0.75rem; border-radius: 100px;
+            flex-shrink: 0;
+        }
+
+        .status-pending  { background: #FEF3C7; color: #92400E; }
+        .status-accepted { background: #DCFCE7; color: #14532D; }
+        .status-rejected { background: #FEE2E2; color: #7F1D1D; }
+
+        /* Message */
+        .request-message {
+            font-size: 0.92rem; line-height: 1.7; color: #374151;
+            background: var(--bg); border-radius: 10px;
+            padding: 0.9rem 1.1rem; margin-bottom: 1rem;
+            white-space: pre-wrap; word-break: break-word;
+        }
+
+        .no-message {
+            font-size: 0.88rem; color: var(--muted);
+            font-style: italic; margin-bottom: 1rem;
+        }
+
+        /* Action buttons */
+        .card-actions {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn-accept {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            height: 38px; padding: 0 1.1rem; border-radius: 9px;
+            border: none; background: #15803D; color: #fff;
+            font-size: 0.83rem; font-weight: 700; font-family: inherit;
+            cursor: pointer; transition: background 0.15s, transform 0.1s;
+        }
+
+        .btn-accept:hover { background: #166534; transform: translateY(-1px); }
+
+        .btn-reject {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            height: 38px; padding: 0 1.1rem; border-radius: 9px;
+            border: 1.5px solid #FECACA; background: #fff; color: #B91C1C;
+            font-size: 0.83rem; font-weight: 700; font-family: inherit;
+            cursor: pointer; transition: all 0.15s;
+        }
+
+        .btn-reject:hover { background: #FEF2F2; border-color: #FCA5A5; }
+
+        /* ── Empty state ──────────────────────────────────────────────────── */
+        .empty-state {
+            background: #fff;
+            border: 1px dashed #D6D6D6;
+            border-radius: 18px;
+            padding: 3.5rem 2rem;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 2.5rem; color: #D1D5DB;
+            display: block; margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.15rem; font-weight: 800; color: var(--ink);
+            margin-bottom: 0.4rem;
+        }
+
+        .empty-sub {
+            font-size: 0.9rem; color: var(--muted); margin: 0;
+        }
+
+        /* ── Responsive ──────────────────────────────────────────────────── */
+        @media (max-width: 640px) {
+            .page-title { font-size: 1.5rem; }
+            .stats-strip { gap: 0.6rem; }
+            .stat-pill { padding: 0.75rem 0.9rem; }
+            .stat-number { font-size: 1.45rem; }
+            .card-top { flex-wrap: wrap; }
+            .card-actions { justify-content: flex-start; }
+            .header-actions .label-hide { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Header ───────────────────────────────────────────────────────── -->
+    <header class="app-header">
+        <div class="inner">
+            <a th:href="@{/dashboard}" class="brand">
+                <span class="logo-mark"><i class="bi bi-compass-fill"></i></span>
+                <span class="logo-name">ChalO</span>
+            </a>
+
+            <div class="header-spacer"></div>
+
+            <div class="header-actions">
+                <a th:href="@{/explore}" class="btn-ghost">
+                    <i class="bi bi-search"></i>
+                    <span class="label-hide">Explore</span>
+                </a>
+                <a th:href="@{/adventures/new}" class="btn-brand">
+                    <i class="bi bi-plus-lg"></i>
+                    <span class="label-hide">Host Adventure</span>
+                </a>
+                <div class="dropdown">
+                    <button class="profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar-sm" th:text="${#strings.substring(userName, 0, 1).toUpperCase()}">A</span>
+                        <i class="bi bi-chevron-down" style="font-size:0.7rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <span class="dropdown-item-text px-2 py-1">
+                                <small class="text-muted">Signed in as</small><br>
+                                <strong th:text="${userName}">Host</strong>
+                            </span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="bi bi-grid"></i> Dashboard</a></li>
+                        <li><a class="dropdown-item" th:href="@{/my-adventures}"><i class="bi bi-backpack2"></i> My Adventures</a></li>
+                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right text-danger"></i> Log out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── Page banner ──────────────────────────────────────────────────── -->
+    <div class="page-banner">
+        <div class="page-banner-inner">
+            <a th:href="@{/adventures/{id}(id=${adventure.id})}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Back to Adventure
+            </a>
+            <h1 class="page-title">Manage Requests</h1>
+            <p class="page-subtitle" th:text="${adventure.title}">Adventure Title</p>
+            <a class="btn-banner" th:href="@{/adventures/{id}/chat(id=${adventure.id})}">
+                <i class="bi bi-chat-dots-fill"></i> Crew Chat
+            </a>
+        </div>
+    </div>
+
+    <!-- ── Main content ─────────────────────────────────────────────────── -->
+    <div class="container-main">
+
+        <!-- Stats strip -->
+        <div class="stats-strip">
+            <div class="stat-pill">
+                <span class="stat-number muted" th:text="${requests.size()}">0</span>
+                <span class="stat-label">Total</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-number" th:text="${pendingCount}">0</span>
+                <span class="stat-label">Pending</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-number" th:text="${acceptedCount}">0</span>
+                <span class="stat-label">Accepted</span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-number muted" th:text="${slotsLeft}">0</span>
+                <span class="stat-label">Slots Left</span>
+            </div>
+        </div>
+
+        <!-- Action flash messages -->
+        <div class="flash-success" th:if="${actionSuccess}">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${actionSuccess}">Action completed.</span>
+        </div>
+        <div class="flash-error" th:if="${actionError}">
+            <i class="bi bi-x-circle-fill"></i>
+            <span th:text="${actionError}">Something went wrong.</span>
+        </div>
+
+        <!-- ── Request cards ─────────────────────────────────────────────── -->
+        <div th:if="${!requests.isEmpty()}">
+
+            <div class="request-card" th:each="req : ${requests}">
+
+                <!-- Top row: avatar + name/date + status badge -->
+                <div class="card-top">
+                    <div class="requester-avatar"
+                         th:text="${#strings.substring(req.requester.name, 0, 1).toUpperCase()}">A</div>
+
+                    <div class="requester-info">
+                        <p class="requester-name" th:text="${req.requester.name}">Requester Name</p>
+                        <p class="requester-date">
+                            <i class="bi bi-clock" style="font-size:0.72rem;"></i>
+                            <span th:text="${#temporals.format(req.createdAt, 'dd MMM yyyy, HH:mm')}">14 Jun 2025, 09:30</span>
+                        </p>
+                    </div>
+
+                    <span class="status-badge"
+                          th:classappend="${req.status.name() == 'ACCEPTED' ? ' status-accepted'
+                                         : (req.status.name() == 'REJECTED' ? ' status-rejected'
+                                         : ' status-pending')}">
+                        <i th:class="${req.status.name() == 'ACCEPTED' ? 'bi bi-check-circle-fill'
+                                     : (req.status.name() == 'REJECTED' ? 'bi bi-x-circle-fill'
+                                     : 'bi bi-hourglass-split')}"></i>
+                        <span th:text="${#strings.capitalize(req.status.name().toLowerCase())}">Pending</span>
+                    </span>
+                </div>
+
+                <!-- Request message -->
+                <p class="request-message"
+                   th:if="${!#strings.isEmpty(req.message)}"
+                   th:text="${req.message}">Request message goes here.</p>
+                <p class="no-message" th:unless="${!#strings.isEmpty(req.message)}">
+                    No message provided.
+                </p>
+
+                <!-- Accept / Reject actions (PENDING only) -->
+                <div class="card-actions" th:if="${req.status.name() == 'PENDING'}">
+                    <form th:action="@{/requests/{id}/reject(id=${req.id})}" method="post">
+                        <button type="submit" class="btn-reject">
+                            <i class="bi bi-x-lg"></i> Reject
+                        </button>
+                    </form>
+                    <form th:action="@{/requests/{id}/accept(id=${req.id})}" method="post">
+                        <button type="submit" class="btn-accept">
+                            <i class="bi bi-check-lg"></i> Accept Request
+                        </button>
+                    </form>
+                </div>
+
+            </div><!-- /request-card -->
+
+        </div><!-- /requests list -->
+
+        <!-- Empty state -->
+        <div class="empty-state" th:if="${requests.isEmpty()}">
+            <i class="bi bi-inbox empty-icon"></i>
+            <h2 class="empty-title">No requests yet</h2>
+            <p class="empty-sub">When adventurers request to join, they'll appear here.</p>
+        </div>
+
+    </div><!-- /container-main -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

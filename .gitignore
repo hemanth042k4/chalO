@@ -1,0 +1,22 @@
+# Maven build output
+target/
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude Code local config
+.claude/
+
+# Sensitive config (use application.properties.example as template)
+src/main/resources/application.properties
+
+# Logs
+*.log

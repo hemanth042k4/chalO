@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${adventure.title + ' — ChalO'}">Adventure — ChalO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand:      #FF6B2B;
+            --brand-dark: #E55A1A;
+            --brand-soft: #FFF1EA;
+            --brand-glow: rgba(255, 107, 43, 0.25);
+            --ink:        #111827;
+            --muted:      #6B7280;
+            --line:       #ECECEC;
+            --bg:         #FAFAFA;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        a { text-decoration: none; }
+
+        /* ── Header ───────────────────────────────────────────────────────── */
+        .app-header {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header .inner {
+            max-width: 1180px; margin: 0 auto;
+            padding: 0.75rem 1.25rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+
+        .brand { display: inline-flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
+
+        .brand .logo-mark {
+            width: 36px; height: 36px; background: var(--brand); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem; box-shadow: 0 4px 12px var(--brand-glow);
+        }
+
+        .brand .logo-name { font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; }
+
+        .header-spacer { flex: 1; }
+        .header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+        .btn-ghost {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            height: 42px; padding: 0 0.95rem;
+            border: 1px solid var(--line); border-radius: 100px;
+            background: #fff; color: var(--ink); font-size: 0.875rem; font-weight: 600;
+            transition: box-shadow 0.18s, border-color 0.18s;
+        }
+
+        .btn-ghost:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); border-color: #DADADA; color: var(--ink); }
+
+        .btn-brand {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            height: 42px; padding: 0 1.1rem; border: none; border-radius: 100px;
+            background: #FF6B2B; background: var(--brand);
+            color: #fff; font-size: 0.875rem; font-weight: 600;
+            box-shadow: 0 4px 14px var(--brand-glow); transition: background 0.18s, transform 0.1s;
+        }
+
+        .btn-brand:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+
+        .profile-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            height: 42px; padding: 0 0.35rem 0 0.85rem;
+            border: 1px solid var(--line); border-radius: 100px;
+            background: #fff; color: var(--ink); font-weight: 600; font-size: 0.875rem;
+        }
+
+        .profile-btn:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); color: var(--ink); }
+
+        .avatar-sm {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+        }
+
+        .dropdown-menu {
+            border: 1px solid var(--line); border-radius: 14px;
+            box-shadow: 0 12px 34px rgba(0,0,0,0.12);
+            padding: 0.4rem; min-width: 210px;
+        }
+
+        .dropdown-item {
+            border-radius: 9px; padding: 0.6rem 0.7rem;
+            font-size: 0.9rem; font-weight: 500;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+
+        .dropdown-item i { color: var(--muted); width: 18px; }
+
+        /* ── Hero ──────────────────────────────────────────────────────────── */
+        .detail-hero {
+            position: relative;
+            height: 480px;
+            background: linear-gradient(150deg, #11202E 0%, #16384A 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top,
+                rgba(0,0,0,0.90) 0%,
+                rgba(0,0,0,0.45) 50%,
+                rgba(0,0,0,0.10) 100%);
+        }
+
+        .hero-body {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            padding-bottom: 2.25rem;
+        }
+
+        .hero-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 1.25rem;
+        }
+
+        .breadcrumb-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.82rem; font-weight: 600;
+            color: rgba(255,255,255,0.65);
+            margin-bottom: 1rem;
+            transition: color 0.15s;
+        }
+
+        .breadcrumb-link:hover { color: #fff; }
+
+        /* Owner preview banner */
+        .owner-banner {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255,107,43,0.25);
+            border: 1px solid rgba(255,107,43,0.5);
+            color: #FFB899;
+            font-size: 0.78rem; font-weight: 700;
+            padding: 0.3rem 0.75rem; border-radius: 100px;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-status {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            padding: 0.3rem 0.7rem; border-radius: 100px;
+            margin-bottom: 0.75rem; margin-left: 0.5rem;
+        }
+
+        .status-published { color: #15803D; background: #DCFCE7; }
+        .status-draft     { color: #475569; background: #E2E8F0; }
+        .status-completed { color: #1D4ED8; background: #DBEAFE; }
+        .status-cancelled { color: #B91C1C; background: #FEE2E2; }
+
+        .hero-title {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.25rem;
+            align-items: center;
+        }
+
+        .hero-meta-item {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.88rem; font-weight: 500;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .hero-meta-item i { color: var(--brand); font-size: 0.9rem; }
+
+        /* ── Page body ─────────────────────────────────────────────────────── */
+        .container-app {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 2.25rem 1.25rem 1rem;
+        }
+
+        /* ── Main column ───────────────────────────────────────────────────── */
+        .detail-section {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 1.6rem 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .section-title i { color: var(--brand); font-size: 1.05rem; }
+
+        /* Description */
+        .description-text {
+            font-size: 0.97rem;
+            line-height: 1.8;
+            color: #374151;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Photo gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .gallery-grid.single { grid-template-columns: 1fr; }
+        .gallery-grid.double { grid-template-columns: repeat(2, 1fr); }
+
+        .gallery-photo {
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .gallery-photo img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+            transition: transform 0.3s;
+        }
+
+        .gallery-photo img:hover { transform: scale(1.04); }
+
+        /* Tags */
+        .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+        .tag-chip {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.84rem; font-weight: 600;
+            color: var(--brand); background: var(--brand-soft);
+            padding: 0.4rem 0.9rem; border-radius: 100px;
+            border: 1px solid rgba(255,107,43,0.2);
+        }
+
+        .tag-chip .tag-icon { font-size: 0.9rem; }
+
+        /* Adventure details grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex; align-items: flex-start; gap: 0.85rem;
+        }
+
+        .info-icon {
+            width: 42px; height: 42px; border-radius: 12px;
+            background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.05rem; flex-shrink: 0;
+        }
+
+        .info-label {
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--muted); margin-bottom: 0.2rem;
+        }
+
+        .info-value {
+            font-size: 0.97rem; font-weight: 600; color: var(--ink);
+        }
+
+        /* ── Sticky sidebar ────────────────────────────────────────────────── */
+        .sticky-sidebar {
+            position: sticky;
+            top: 73px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .sidebar-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 1.5rem;
+        }
+
+        /* Slot indicator */
+        .slot-count {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: 0.5rem;
+        }
+
+        .slot-numbers {
+            font-size: 1rem; font-weight: 700; color: var(--ink);
+        }
+
+        .slot-numbers span { font-size: 1.5rem; font-weight: 800; color: var(--brand); }
+
+        .slot-remaining {
+            font-size: 0.8rem; font-weight: 600; color: var(--muted);
+        }
+
+        .slot-bar-wrap {
+            height: 7px; border-radius: 100px;
+            background: #F3F4F6;
+            overflow: hidden; margin-bottom: 1.25rem;
+        }
+
+        .slot-bar-fill {
+            height: 100%; border-radius: 100px;
+            background: linear-gradient(90deg, var(--brand) 0%, var(--brand-dark) 100%);
+            transition: width 0.4s ease;
+        }
+
+        /* Join states */
+        .join-notice {
+            display: flex; align-items: flex-start; gap: 0.75rem;
+            padding: 0.95rem 1.1rem; border-radius: 12px; margin-bottom: 1rem;
+        }
+
+        .join-notice i { font-size: 1.25rem; flex-shrink: 0; margin-top: 0.05rem; }
+        .join-notice strong { display: block; font-size: 0.93rem; font-weight: 700; margin-bottom: 0.15rem; }
+        .join-notice p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+
+        .join-owner    { background: var(--brand-soft); }
+        .join-owner i  { color: var(--brand); }
+        .join-success  { background: #DCFCE7; }
+        .join-success i { color: #15803D; }
+        .join-pending  { background: #FEF9C3; }
+        .join-pending i { color: #A16207; }
+        .join-accepted { background: #DCFCE7; }
+        .join-accepted i { color: #15803D; }
+        .join-rejected { background: #FEE2E2; }
+        .join-rejected i { color: #B91C1C; }
+        .join-full     { background: #FEF3C7; }
+        .join-full i   { color: #92400E; }
+        .join-ended    { background: #F1F5F9; }
+        .join-ended i  { color: var(--muted); }
+
+        .join-owner-actions {
+            display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;
+        }
+
+        .btn-sm-outline {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            height: 36px; padding: 0 0.85rem; border-radius: 8px;
+            border: 1.5px solid var(--brand); background: #fff; color: var(--brand);
+            font-size: 0.8rem; font-weight: 600; transition: all 0.15s;
+        }
+
+        .btn-sm-outline:hover { background: var(--brand); color: #fff; }
+
+        .btn-sm-ghost {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            height: 36px; padding: 0 0.85rem; border-radius: 8px;
+            border: 1px solid var(--line); background: #fff; color: var(--ink);
+            font-size: 0.8rem; font-weight: 600; transition: all 0.15s;
+        }
+
+        .btn-sm-ghost:hover { border-color: #DADADA; box-shadow: 0 2px 8px rgba(0,0,0,0.06); color: var(--ink); }
+
+        /* Join form */
+        .join-label {
+            display: block;
+            font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.6px;
+            color: var(--muted); margin-bottom: 0.55rem;
+        }
+
+        .join-textarea {
+            display: block; width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1.5px solid #E5E7EB; border-radius: 12px;
+            background: #fff; color: var(--ink);
+            font-size: 0.9rem; font-family: inherit; line-height: 1.6;
+            resize: vertical; outline: none; margin-bottom: 0.85rem;
+            transition: border-color 0.15s;
+        }
+
+        .join-textarea:focus { border-color: var(--brand); }
+        .join-textarea::placeholder { color: #9CA3AF; }
+
+        .btn-join {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            width: 100%; height: 50px; border: none; border-radius: 13px;
+            background: #FF6B2B; background: var(--brand); color: #fff;
+            font-size: 0.97rem; font-weight: 700; font-family: inherit;
+            box-shadow: 0 6px 18px var(--brand-glow);
+            cursor: pointer; transition: background 0.18s, transform 0.1s;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-join:hover { background: var(--brand-dark); transform: translateY(-1px); }
+
+        .join-login-btn {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            width: 100%; height: 50px; border-radius: 13px;
+            background: #FF6B2B; background: var(--brand); color: #fff;
+            font-size: 0.97rem; font-weight: 700;
+            box-shadow: 0 6px 18px var(--brand-glow);
+            transition: background 0.18s; margin-bottom: 0.75rem;
+        }
+
+        .join-login-btn:hover { background: var(--brand-dark); color: #fff; }
+
+        .join-note {
+            display: flex; align-items: center; gap: 0.4rem;
+            font-size: 0.78rem; color: var(--muted); margin: 0;
+        }
+
+        .join-note i { font-size: 0.82rem; color: #9CA3AF; }
+
+        .join-soon {
+            display: flex; align-items: center; gap: 0.35rem;
+            font-size: 0.75rem; color: #9CA3AF; font-style: italic;
+            margin-top: 0.45rem;
+        }
+
+        /* ── Host card ─────────────────────────────────────────────────────── */
+        .host-avatar-wrap {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .host-avatar-lg {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.45rem; font-weight: 800; flex-shrink: 0;
+            box-shadow: 0 4px 14px var(--brand-glow);
+        }
+
+        .host-avatar-lg img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+        .host-name { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.2rem; }
+        .host-role { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+
+        .host-bio {
+            font-size: 0.88rem; line-height: 1.65; color: #4B5563;
+            margin-bottom: 1rem;
+        }
+
+        .host-divider { border: none; border-top: 1px solid var(--line); margin: 1rem 0; }
+
+        .host-stats {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 0.85rem; margin-bottom: 1rem;
+        }
+
+        .host-stat {
+            text-align: center; padding: 0.7rem 0.5rem;
+            background: var(--bg); border-radius: 12px;
+        }
+
+        .host-stat-number {
+            font-size: 1.5rem; font-weight: 800; color: var(--brand); line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+
+        .host-stat-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+
+        .host-badges { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+        .badge-chip {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            font-size: 0.72rem; font-weight: 700;
+            padding: 0.28rem 0.65rem; border-radius: 100px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f2438 100%);
+            color: #93C5FD;
+        }
+
+        .badge-chip i { font-size: 0.78rem; }
+
+        /* ── Related adventures ─────────────────────────────────────────────── */
+        .related-section {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 1.25rem 4rem;
+        }
+
+        .related-head {
+            display: flex; align-items: baseline; justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .related-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; }
+        .related-sub   { font-size: 0.88rem; color: var(--muted); }
+
+        /* ── Adventure cards (reused from explore) ─────────────────────────── */
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+
+        .adv-card {
+            background: #fff; border: 1px solid var(--line); border-radius: 18px;
+            overflow: hidden; display: flex; flex-direction: column;
+            transition: box-shadow 0.2s, transform 0.15s;
+        }
+
+        .adv-card:hover { box-shadow: 0 14px 34px rgba(0,0,0,0.10); transform: translateY(-3px); }
+
+        .adv-cover { position: relative; aspect-ratio: 3 / 2; background: #EEE; overflow: hidden; }
+        .adv-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .adv-cover-placeholder {
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #16384A 0%, #11202E 100%);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.35); font-size: 2rem;
+        }
+
+        .adv-date-badge {
+            position: absolute; top: 0.7rem; left: 0.7rem;
+            background: rgba(255,255,255,0.95); color: var(--ink);
+            font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.6rem;
+            border-radius: 100px;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        .adv-body { padding: 0.95rem 1rem 1.05rem; display: flex; flex-direction: column; flex: 1; }
+        .adv-title { font-size: 0.97rem; font-weight: 700; color: var(--ink); line-height: 1.3; margin-bottom: 0.45rem; }
+        .adv-meta { display: flex; align-items: center; gap: 0.35rem; font-size: 0.81rem; color: var(--muted); margin-bottom: 0.3rem; }
+        .adv-meta i { color: var(--brand); font-size: 0.82rem; width: 14px; }
+        .adv-actions { margin-top: auto; padding-top: 0.7rem; }
+
+        .btn-view {
+            display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+            width: 100%; height: 38px; border-radius: 9px;
+            border: none; background: var(--brand-soft); color: var(--brand);
+            font-size: 0.82rem; font-weight: 700;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .btn-view:hover { background: var(--brand); color: #fff; }
+
+        /* ── No related state ────────────────────────────────────────────────── */
+        .no-related {
+            background: #fff; border: 1px dashed #D6D6D6; border-radius: 16px;
+            padding: 2rem; text-align: center; color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        /* ── Responsive ──────────────────────────────────────────────────────── */
+        @media (max-width: 991px) {
+            .sticky-sidebar { position: static; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 900px) {
+            .card-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .detail-hero { height: 360px; }
+            .hero-title  { font-size: 1.85rem; }
+            .card-grid   { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .header-actions .label-hide { display: none; }
+            .btn-ghost, .btn-brand { padding: 0 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Header ───────────────────────────────────────────────────────── -->
+    <header class="app-header">
+        <div class="inner">
+            <a th:href="@{/dashboard}" class="brand">
+                <span class="logo-mark"><i class="bi bi-compass-fill"></i></span>
+                <span class="logo-name">ChalO</span>
+            </a>
+
+            <div class="header-spacer"></div>
+
+            <!-- Logged-in -->
+            <div class="header-actions" th:if="${userName != null}">
+                <a th:href="@{/explore}" class="btn-ghost">
+                    <i class="bi bi-search"></i>
+                    <span class="label-hide">Explore</span>
+                </a>
+                <a th:href="@{/adventures/new}" class="btn-brand">
+                    <i class="bi bi-plus-lg"></i>
+                    <span class="label-hide">Host Adventure</span>
+                </a>
+                <div class="dropdown">
+                    <button class="profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar-sm" th:text="${#strings.substring(userName, 0, 1).toUpperCase()}">A</span>
+                        <i class="bi bi-chevron-down" style="font-size:0.7rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <span class="dropdown-item-text px-2 py-1">
+                                <small class="text-muted">Signed in as</small><br>
+                                <strong th:text="${userName}">Explorer</strong>
+                            </span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="bi bi-grid"></i> Dashboard</a></li>
+                        <li><a class="dropdown-item" th:href="@{/my-adventures}"><i class="bi bi-backpack2"></i> My Adventures</a></li>
+                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right text-danger"></i> Log out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Anonymous -->
+            <div class="header-actions" th:unless="${userName != null}">
+                <a th:href="@{/login}" class="btn-ghost">Log in</a>
+                <a th:href="@{/register}" class="btn-brand">Sign up free</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+    <section class="detail-hero">
+
+        <!-- Cover image (optional) -->
+        <img th:if="${adventure.coverImageUrl != null and !adventure.coverImageUrl.empty}"
+             class="hero-bg"
+             th:src="${adventure.coverImageUrl}"
+             th:alt="${adventure.title}"
+             loading="eager">
+
+        <div class="hero-overlay"></div>
+
+        <div class="hero-body">
+            <div class="hero-inner">
+
+                <!-- Breadcrumb + badges row -->
+                <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+                    <a th:href="@{/explore}" class="breadcrumb-link">
+                        <i class="bi bi-arrow-left"></i> Explore Adventures
+                    </a>
+                    <span th:if="${isOwner}" class="owner-banner">
+                        <i class="bi bi-shield-fill"></i> Your Adventure
+                    </span>
+                    <span th:class="${'hero-status status-' + adventure.status.name().toLowerCase()}"
+                          th:text="${#strings.capitalize(adventure.status.name().toLowerCase())}">Published</span>
+                </div>
+
+                <!-- Title -->
+                <h1 class="hero-title" th:text="${adventure.title}">Adventure Title</h1>
+
+                <!-- Meta row -->
+                <div class="hero-meta">
+                    <span class="hero-meta-item">
+                        <i class="bi bi-calendar-event-fill"></i>
+                        <span th:text="${#temporals.format(adventure.adventureDate, 'EEE, dd MMM yyyy')}">Date</span>
+                    </span>
+                    <span class="hero-meta-item" th:if="${adventure.locationName != null}">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span th:text="${adventure.locationName}">Location</span>
+                    </span>
+                    <span class="hero-meta-item">
+                        <i class="bi bi-people-fill"></i>
+                        <span th:text="${slotsLeft + ' of ' + adventure.maxParticipants + ' spots left'}">5 of 8 spots left</span>
+                    </span>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Main body ─────────────────────────────────────────────────────── -->
+    <div class="container-app">
+
+        <!-- Join success flash -->
+        <div th:if="${joinSuccess}"
+             style="background:#DCFCE7; border:1px solid #BBF7D0; border-radius:12px;
+                    padding:1rem 1.25rem; margin-bottom:1.5rem;
+                    display:flex; align-items:center; gap:0.75rem;">
+            <i class="bi bi-check-circle-fill" style="color:#15803D; font-size:1.25rem; flex-shrink:0;"></i>
+            <div>
+                <strong style="font-size:0.93rem; color:#14532D; display:block; margin-bottom:0.15rem;">Request sent!</strong>
+                <span style="font-size:0.82rem; color:#166534;">The host will review your request and get back to you.</span>
+            </div>
+        </div>
+
+        <!-- Join error flash -->
+        <div th:if="${joinError}"
+             style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px;
+                    padding:1rem 1.25rem; margin-bottom:1.5rem;
+                    display:flex; align-items:center; gap:0.75rem;">
+            <i class="bi bi-exclamation-circle-fill" style="color:#B91C1C; font-size:1.25rem; flex-shrink:0;"></i>
+            <div>
+                <strong style="font-size:0.93rem; color:#7F1D1D; display:block; margin-bottom:0.15rem;">Could not submit request</strong>
+                <span style="font-size:0.82rem; color:#991B1B;" th:text="${joinError}">Error message</span>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- ── Left: main content ─────────────────────────────────────── -->
+            <div class="col-lg-8">
+
+                <!-- About -->
+                <div class="detail-section">
+                    <h2 class="section-title"><i class="bi bi-book"></i> About this adventure</h2>
+                    <p class="description-text" th:text="${adventure.description}">Description goes here.</p>
+                </div>
+
+                <!-- Photo gallery -->
+                <div class="detail-section">
+                    <h2 class="section-title"><i class="bi bi-images"></i> Photos</h2>
+                    <div th:if="${not adventure.photos.empty}"
+                         th:class="${'gallery-grid' + (adventure.photos.size() == 1 ? ' single' : (adventure.photos.size() == 2 ? ' double' : ''))}">
+                        <div class="gallery-photo" th:each="photo : ${adventure.photos}">
+                            <img th:src="${photo.url}" th:alt="${photo.caption} ?: ${adventure.title}" loading="lazy">
+                        </div>
+                    </div>
+                    <div th:if="${adventure.photos.empty}"
+                         style="background:var(--bg); border:1.5px dashed #D6D6D6; border-radius:14px;
+                                padding:2.75rem; text-align:center; color:var(--muted);">
+                        <i class="bi bi-images"
+                           style="font-size:2.25rem; display:block; margin-bottom:0.6rem; color:#C9CDD4;"></i>
+                        <span style="font-size:0.9rem; font-weight:500;">No photos added yet.</span>
+                    </div>
+                </div>
+
+                <!-- Interests / Tags -->
+                <div class="detail-section" th:if="${!adventure.tags.empty}">
+                    <h2 class="section-title"><i class="bi bi-tag-fill"></i> Interests</h2>
+                    <div class="tag-row">
+                        <span class="tag-chip" th:each="tag : ${adventure.tags}">
+                            <i th:class="${'chip-icon ' + tag.icon}"></i>
+                            <span th:text="${tag.name}">Trekking</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Adventure details grid -->
+                <div class="detail-section">
+                    <h2 class="section-title"><i class="bi bi-info-circle-fill"></i> Adventure details</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-icon"><i class="bi bi-calendar-event-fill"></i></div>
+                            <div>
+                                <p class="info-label">Date</p>
+                                <p class="info-value" th:text="${#temporals.format(adventure.adventureDate, 'EEEE, dd MMMM yyyy')}">Saturday, 14 June 2026</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                            <div>
+                                <p class="info-label">Location</p>
+                                <p class="info-value" th:text="${adventure.locationName} ?: 'Location TBD'">Kudremukh, Karnataka</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="bi bi-people-fill"></i></div>
+                            <div>
+                                <p class="info-label">Group size</p>
+                                <p class="info-value" th:text="${'Up to ' + adventure.maxParticipants + ' adventurers'}">Up to 8 adventurers</p>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
+                            <div>
+                                <p class="info-label">Spots remaining</p>
+                                <p class="info-value" th:text="${slotsLeft + ' of ' + adventure.maxParticipants}">5 of 8</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /col-lg-8 -->
+
+            <!-- ── Right: sidebar ─────────────────────────────────────────── -->
+            <div class="col-lg-4">
+                <div class="sticky-sidebar">
+
+                    <!-- ── Join card ─────────────────────────────────────── -->
+                    <div class="sidebar-card">
+
+                        <!-- Slots indicator -->
+                        <div class="slot-count">
+                            <div class="slot-numbers">
+                                <span th:text="${slotsLeft}">5</span>
+                                <span style="font-size:1rem; font-weight:600; color:var(--muted);">/ <span th:text="${adventure.maxParticipants}">8</span></span>
+                            </div>
+                            <span class="slot-remaining">spots remaining</span>
+                        </div>
+                        <div class="slot-bar-wrap">
+                            <div class="slot-bar-fill" th:style="'width:' + ${fillPercent} + '%'"></div>
+                        </div>
+
+                        <!-- Owner notice -->
+                        <div class="join-notice join-owner" th:if="${isOwner}">
+                            <i class="bi bi-shield-check-fill"></i>
+                            <div>
+                                <strong>You're hosting this</strong>
+                                <p>View who wants to join and manage your requests.</p>
+                                <div class="join-owner-actions">
+                                    <a class="btn-sm-outline" th:href="@{/adventures/{id}/requests(id=${adventure.id})}">
+                                        <i class="bi bi-people"></i> View Requests
+                                    </a>
+                                    <a class="btn-sm-outline" th:href="@{/adventures/{id}/chat(id=${adventure.id})}">
+                                        <i class="bi bi-chat-dots-fill"></i> Crew Chat
+                                    </a>
+                                    <a class="btn-sm-ghost" th:href="@{/my-adventures}">
+                                        <i class="bi bi-backpack2"></i> My Adventures
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Request PENDING -->
+                        <div class="join-notice join-pending" th:if="${!isOwner and isPendingRequest}">
+                            <i class="bi bi-hourglass-split"></i>
+                            <div>
+                                <strong>Request Pending</strong>
+                                <p>Your request is waiting for the host's review. We'll let you know once they decide.</p>
+                            </div>
+                        </div>
+
+                        <!-- Request ACCEPTED -->
+                        <div class="join-notice join-accepted" th:if="${!isOwner and isAcceptedRequest}">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <div>
+                                <strong>You're Part of This Adventure!</strong>
+                                <p>The host has accepted your request. Get ready for the adventure!</p>
+                                <div class="join-owner-actions">
+                                    <a class="btn-sm-outline" th:href="@{/adventures/{id}/chat(id=${adventure.id})}">
+                                        <i class="bi bi-chat-dots-fill"></i> Crew Chat
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Request REJECTED -->
+                        <div class="join-notice join-rejected" th:if="${!isOwner and isRejectedRequest}">
+                            <i class="bi bi-x-circle-fill"></i>
+                            <div>
+                                <strong>Request Not Accepted</strong>
+                                <p>The host decided not to accept your request this time. Keep exploring other adventures!</p>
+                            </div>
+                        </div>
+
+                        <!-- Adventure full -->
+                        <div class="join-notice join-full" th:if="${!isOwner and !alreadyRequested and isFull and isPublished}">
+                            <i class="bi bi-x-circle-fill"></i>
+                            <div>
+                                <strong>Adventure is Full</strong>
+                                <p>All spots have been filled. Check back in case someone drops out.</p>
+                            </div>
+                        </div>
+
+                        <!-- Adventure completed/cancelled (visible to all, not owner) -->
+                        <div class="join-notice join-ended" th:if="${!isOwner and isCompleted}">
+                            <i class="bi bi-flag-fill"></i>
+                            <div>
+                                <strong>Adventure Completed</strong>
+                                <p>This adventure has already taken place.</p>
+                            </div>
+                        </div>
+
+                        <div class="join-notice join-ended" th:if="${!isOwner and !isCompleted and !isPublished and !alreadyRequested}">
+                            <i class="bi bi-slash-circle"></i>
+                            <div>
+                                <strong>Not Available</strong>
+                                <p>This adventure is no longer accepting requests.</p>
+                            </div>
+                        </div>
+
+                        <!-- Not logged in, adventure open -->
+                        <div th:if="${!isOwner and !isLoggedIn and isPublished and !isFull}">
+                            <p style="font-size:0.88rem; color:var(--muted); margin-bottom:0.85rem;">
+                                Sign in to request joining this adventure.
+                            </p>
+                            <a th:href="@{/login}" class="join-login-btn">
+                                <i class="bi bi-person-circle"></i> Log in to Join
+                            </a>
+                            <p class="join-note">
+                                <i class="bi bi-shield-check"></i>
+                                Host reviews every request personally
+                            </p>
+                        </div>
+
+                        <!-- Request to Join button → opens modal -->
+                        <div th:if="${showJoinButton}">
+                            <button type="button" class="btn-join"
+                                    data-bs-toggle="modal" data-bs-target="#joinModal">
+                                <i class="bi bi-send-fill"></i> Request to Join
+                            </button>
+                            <p class="join-note">
+                                <i class="bi bi-shield-check"></i>
+                                Host reviews every request personally
+                            </p>
+                        </div>
+
+                    </div><!-- /join card -->
+
+                    <!-- ── Host card ──────────────────────────────────────── -->
+                    <div class="sidebar-card">
+
+                        <div class="host-avatar-wrap">
+                            <div class="host-avatar-lg">
+                                <img th:if="${host.avatarUrl != null and !host.avatarUrl.empty}"
+                                     th:src="${host.avatarUrl}" th:alt="${host.name}">
+                                <span th:unless="${host.avatarUrl != null and !host.avatarUrl.empty}"
+                                      th:text="${#strings.substring(host.name, 0, 1).toUpperCase()}">A</span>
+                            </div>
+                            <div>
+                                <p class="host-name" th:text="${host.name}">Host Name</p>
+                                <p class="host-role">Adventure Host</p>
+                            </div>
+                        </div>
+
+                        <!-- Bio (if set) -->
+                        <p class="host-bio" th:if="${host.bio != null and !host.bio.empty}"
+                           th:text="${host.bio}">Bio goes here.</p>
+
+                        <hr class="host-divider">
+
+                        <!-- Stats -->
+                        <div class="host-stats">
+                            <div class="host-stat">
+                                <div class="host-stat-number" th:text="${totalHosted}">0</div>
+                                <div class="host-stat-label">Hosted</div>
+                            </div>
+                            <div class="host-stat">
+                                <div class="host-stat-number" th:text="${totalCompleted}">0</div>
+                                <div class="host-stat-label">Completed</div>
+                            </div>
+                        </div>
+
+                        <!-- Badges (shown only when earned) -->
+                        <div class="host-badges" th:if="${!hostBadges.empty}">
+                            <span class="badge-chip" th:each="badge : ${hostBadges}">
+                                <i class="bi bi-award-fill"></i>
+                                <span th:text="${badge}">Badge</span>
+                            </span>
+                        </div>
+
+                        <!-- New host (no badges yet) -->
+                        <div th:unless="${!hostBadges.empty}"
+                             style="font-size:0.82rem; color:var(--muted); font-style:italic;">
+                            New to hosting — be their first adventurer!
+                        </div>
+
+                    </div><!-- /host card -->
+
+                </div><!-- /sticky-sidebar -->
+            </div><!-- /col-lg-4 -->
+
+        </div><!-- /row -->
+    </div><!-- /container-app -->
+
+    <!-- ── Related Adventures ────────────────────────────────────────────── -->
+    <div class="related-section">
+
+        <div class="related-head">
+            <div>
+                <h2 class="related-title"
+                    th:text="${'More by ' + host.name}">More by Host</h2>
+                <p class="related-sub">Other adventures from the same host</p>
+            </div>
+            <a th:href="@{/explore}" style="font-size:0.875rem; font-weight:600; color:var(--brand);">
+                See all adventures →
+            </a>
+        </div>
+
+        <!-- Related cards -->
+        <div class="card-grid" th:if="${!relatedAdventures.empty}">
+            <article class="adv-card" th:each="rel : ${relatedAdventures}">
+                <div class="adv-cover">
+                    <img th:if="${rel.coverImageUrl != null and !rel.coverImageUrl.empty}"
+                         th:src="${rel.coverImageUrl}" th:alt="${rel.title}" loading="lazy">
+                    <div th:unless="${rel.coverImageUrl != null and !rel.coverImageUrl.empty}"
+                         class="adv-cover-placeholder">
+                        <i class="bi bi-compass-fill"></i>
+                    </div>
+                    <span class="adv-date-badge">
+                        <i class="bi bi-calendar-event"></i>
+                        <span th:text="${#temporals.format(rel.adventureDate, 'dd MMM yyyy')}">14 Jun 2026</span>
+                    </span>
+                </div>
+                <div class="adv-body">
+                    <h3 class="adv-title" th:text="${rel.title}">Adventure Title</h3>
+                    <div class="adv-meta" th:if="${rel.locationName != null}">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span th:text="${rel.locationName}">Location</span>
+                    </div>
+                    <div class="adv-meta">
+                        <i class="bi bi-person-fill"></i>
+                        <span>by <strong th:text="${host.name}">Host</strong></span>
+                    </div>
+                    <div class="adv-actions">
+                        <a class="btn-view" th:href="@{/adventures/{id}(id=${rel.id})}">
+                            <i class="bi bi-arrow-right-circle"></i> View Adventure
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <!-- No related adventures placeholder -->
+        <div class="no-related" th:unless="${!relatedAdventures.empty}">
+            <i class="bi bi-compass" style="font-size:1.5rem; display:block; margin-bottom:0.5rem; color:#C9CDD4;"></i>
+            No other adventures from this host yet.
+            <br>
+            <a th:href="@{/explore}" style="color:var(--brand); font-weight:600;">Explore all adventures →</a>
+        </div>
+
+    </div>
+
+    <!-- ── Request to Join Modal ─────────────────────────────────────────────── -->
+    <div class="modal fade" id="joinModal" tabindex="-1"
+         aria-labelledby="joinModalLabel" aria-hidden="true"
+         th:if="${showJoinButton}">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"
+                 style="border-radius:18px; border:none; overflow:hidden;
+                        box-shadow:0 24px 60px rgba(0,0,0,0.18);">
+
+                <!-- Modal header -->
+                <div class="modal-header"
+                     style="border-bottom:1px solid var(--line); padding:1.35rem 1.5rem;">
+                    <h5 class="modal-title" id="joinModalLabel"
+                        style="font-weight:800; font-size:1.05rem; letter-spacing:-0.3px;
+                               display:flex; align-items:center; gap:0.45rem;">
+                        <i class="bi bi-send-fill" style="color:var(--brand);"></i>
+                        Request to Join
+                    </h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Modal form -->
+                <form th:action="@{/adventures/{id}/join-request(id=${adventure.id})}"
+                      method="post">
+                    <div class="modal-body" style="padding:1.5rem 1.5rem 1rem;">
+                        <p style="font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem;">
+                            Introduce yourself to
+                            <strong th:text="${host.name}">the host</strong>
+                            and share why you'd love to join this adventure.
+                        </p>
+                        <label class="join-label" for="joinMessage">Message to Host</label>
+                        <textarea id="joinMessage" name="message"
+                                  class="join-textarea" rows="5">Hey! I'd love to join this adventure.</textarea>
+                    </div>
+                    <div class="modal-footer"
+                         style="border-top:1px solid var(--line); padding:1rem 1.5rem;
+                                justify-content:flex-end; gap:0.5rem;">
+                        <button type="button" class="btn-sm-ghost"
+                                data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit"
+                                style="display:inline-flex; align-items:center; gap:0.45rem;
+                                       height:42px; padding:0 1.25rem; border:none; border-radius:10px;
+                                       background:var(--brand); color:#fff; font-size:0.875rem;
+                                       font-weight:700; box-shadow:0 4px 14px var(--brand-glow);
+                                       cursor:pointer; transition:background 0.18s, transform 0.1s;">
+                            <i class="bi bi-send-fill"></i> Send Request
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

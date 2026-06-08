@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${adventure.title + ' — Crew Chat — ChalO'}">Crew Chat — ChalO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand:      #FF6B2B;
+            --brand-dark: #E55A1A;
+            --brand-soft: #FFF1EA;
+            --brand-glow: rgba(255, 107, 43, 0.25);
+            --ink:        #111827;
+            --muted:      #6B7280;
+            --line:       #ECECEC;
+            --bg:         #FAFAFA;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        /* Full-height chat layout: body is a vertical flex container so
+           the header shrinks to its natural size and chat-outer fills the rest. */
+        html { height: 100%; }
+
+        body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        a { text-decoration: none; }
+
+        /* ── Header ────────────────────────────────────────────────────── */
+        .app-header {
+            flex-shrink: 0;
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            z-index: 100;
+        }
+
+        .app-header .inner {
+            max-width: 1180px; margin: 0 auto;
+            padding: 0.75rem 1.25rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+
+        .brand { display: inline-flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
+        .brand .logo-mark {
+            width: 36px; height: 36px; background: var(--brand); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem; box-shadow: 0 4px 12px var(--brand-glow);
+        }
+        .brand .logo-name { font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; }
+
+        .header-spacer { flex: 1; }
+        .header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+        .profile-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            height: 42px; padding: 0 0.35rem 0 0.85rem;
+            border: 1px solid var(--line); border-radius: 100px;
+            background: #fff; color: var(--ink); font-weight: 600; font-size: 0.875rem;
+        }
+        .profile-btn:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); color: var(--ink); }
+
+        .avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+        }
+
+        .dropdown-menu {
+            border: 1px solid var(--line); border-radius: 14px;
+            box-shadow: 0 12px 34px rgba(0,0,0,0.12);
+            padding: 0.4rem; min-width: 210px;
+        }
+        .dropdown-item {
+            border-radius: 9px; padding: 0.6rem 0.7rem;
+            font-size: 0.9rem; font-weight: 500;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .dropdown-item i { color: var(--muted); width: 18px; }
+
+        /* ── Chat outer: fills height left after header ─────────────────── */
+        .chat-outer {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── Info bar ───────────────────────────────────────────────────── */
+        .chat-info-bar {
+            flex-shrink: 0;
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            padding: 0.8rem 1.25rem;
+        }
+
+        .info-inner { max-width: 720px; margin: 0 auto; }
+
+        .back-link {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-size: 0.8rem; font-weight: 600; color: var(--muted);
+            margin-bottom: 0.35rem;
+            transition: color 0.15s;
+        }
+        .back-link:hover { color: var(--brand); }
+        .back-link i { font-size: 0.78rem; }
+
+        .info-title {
+            font-size: 1.05rem; font-weight: 800;
+            letter-spacing: -0.3px; margin-bottom: 0.2rem;
+            color: var(--ink);
+        }
+
+        .info-meta {
+            display: flex; flex-wrap: wrap; gap: 0.15rem 1rem;
+            font-size: 0.8rem; color: var(--muted); align-items: center;
+        }
+        .info-meta i { color: var(--brand); font-size: 0.78rem; margin-right: 0.2rem; }
+
+        .host-role-chip {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; padding: 0.15rem 0.55rem; border-radius: 100px;
+            background: var(--brand-soft); color: var(--brand);
+        }
+
+        /* ── Message list ───────────────────────────────────────────────── */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem 1.25rem;
+            background: var(--bg);
+        }
+
+        .msg-list-inner { max-width: 720px; margin: 0 auto; }
+
+        /* ── Error flash ────────────────────────────────────────────────── */
+        .chat-error {
+            display: flex; align-items: center; gap: 0.5rem;
+            background: #FEF2F2; border: 1px solid #FECACA;
+            border-radius: 10px; padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem; color: #991B1B;
+        }
+        .chat-error i { font-size: 1rem; color: #B91C1C; flex-shrink: 0; }
+
+        /* ── Empty state ────────────────────────────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .empty-icon {
+            font-size: 3rem; color: #C9CDD4;
+            display: block; margin-bottom: 1rem;
+        }
+        .empty-title {
+            font-size: 1.05rem; font-weight: 700; color: var(--ink);
+            margin-bottom: 0.4rem;
+        }
+        .empty-sub {
+            font-size: 0.88rem; color: var(--muted);
+            max-width: 360px; margin: 0 auto; line-height: 1.6;
+        }
+
+        /* ── Message item ───────────────────────────────────────────────── */
+        .msg-item {
+            display: flex; gap: 0.75rem;
+            margin-bottom: 1.1rem; align-items: flex-start;
+        }
+
+        .msg-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--brand-soft); color: var(--brand);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem;
+            flex-shrink: 0; margin-top: 0.1rem;
+        }
+        .msg-avatar.own { background: var(--brand); color: #fff; }
+
+        .msg-body { flex: 1; min-width: 0; }
+
+        .msg-header {
+            display: flex; align-items: center;
+            gap: 0.4rem; margin-bottom: 0.3rem; flex-wrap: wrap;
+        }
+
+        .msg-sender { font-size: 0.875rem; font-weight: 700; color: var(--ink); }
+
+        .host-badge {
+            font-size: 0.62rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            padding: 0.15rem 0.5rem; border-radius: 100px;
+            background: var(--brand); color: #fff;
+        }
+
+        .msg-time { font-size: 0.75rem; color: var(--muted); }
+
+        .msg-bubble {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 0 12px 12px 12px;
+            padding: 0.65rem 0.9rem;
+            display: block;
+        }
+        .msg-bubble.own {
+            background: var(--brand-soft);
+            border-color: #FFD6C0;
+            border-radius: 12px 12px 12px 0;
+        }
+
+        .msg-content {
+            font-size: 0.9rem; line-height: 1.65; color: var(--ink);
+            margin: 0; word-break: break-word; white-space: pre-wrap;
+        }
+
+        /* ── Composer ───────────────────────────────────────────────────── */
+        .chat-composer {
+            flex-shrink: 0;
+            background: #fff;
+            border-top: 1px solid var(--line);
+            padding: 0.85rem 1.25rem;
+        }
+
+        .composer-inner { max-width: 720px; margin: 0 auto; }
+
+        .msg-textarea {
+            display: block; width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid #E5E7EB; border-radius: 12px;
+            background: #fff; color: var(--ink);
+            font-size: 0.9rem; font-family: inherit; line-height: 1.55;
+            resize: none; height: 72px; outline: none;
+            transition: border-color 0.15s;
+        }
+        .msg-textarea:focus { border-color: var(--brand); }
+        .msg-textarea::placeholder { color: #9CA3AF; }
+
+        .composer-actions {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-top: 0.5rem;
+        }
+        .char-hint { font-size: 0.75rem; color: var(--muted); }
+
+        .btn-send {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            height: 38px; padding: 0 1.15rem;
+            border: none; border-radius: 10px;
+            background: var(--brand); color: #fff;
+            font-size: 0.875rem; font-weight: 700; font-family: inherit;
+            cursor: pointer; transition: background 0.18s;
+        }
+        .btn-send:hover { background: var(--brand-dark); }
+        .btn-send:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* ── Responsive ─────────────────────────────────────────────────── */
+        @media (max-width: 640px) {
+            .info-meta { gap: 0.4rem; }
+            .header-actions .label-hide { display: none; }
+            .chat-messages { padding: 1rem 0.9rem; }
+            .chat-composer { padding: 0.7rem 0.9rem; }
+            .chat-info-bar { padding: 0.7rem 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Header ───────────────────────────────────────────────────────── -->
+    <header class="app-header">
+        <div class="inner">
+            <a th:href="@{/dashboard}" class="brand">
+                <span class="logo-mark"><i class="bi bi-compass-fill"></i></span>
+                <span class="logo-name">ChalO</span>
+            </a>
+
+            <div class="header-spacer"></div>
+
+            <div class="header-actions">
+                <div class="dropdown">
+                    <button class="profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar" th:text="${#strings.substring(userName, 0, 1).toUpperCase()}">A</span>
+                        <i class="bi bi-chevron-down" style="font-size:0.7rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <span class="dropdown-item-text px-2 py-1">
+                                <small class="text-muted">Signed in as</small><br>
+                                <strong th:text="${userName}">Explorer</strong>
+                            </span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="bi bi-grid"></i> Dashboard</a></li>
+                        <li><a class="dropdown-item" th:href="@{/my-adventures}"><i class="bi bi-backpack2"></i> My Adventures</a></li>
+                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right text-danger"></i> Log out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── Chat outer ───────────────────────────────────────────────────── -->
+    <div class="chat-outer">
+
+        <!-- ── Info bar ─────────────────────────────────────────────────── -->
+        <div class="chat-info-bar">
+            <div class="info-inner">
+                <a th:href="@{/adventures/{id}(id=${adventure.id})}" class="back-link">
+                    <i class="bi bi-arrow-left"></i> Back to Adventure
+                </a>
+                <p class="info-title" th:text="${adventure.title}">Adventure Title</p>
+                <div class="info-meta">
+                    <span>
+                        <i class="bi bi-calendar-event"></i>
+                        <span th:text="${#temporals.format(adventure.adventureDate, 'EEE, dd MMM yyyy')}">Date</span>
+                    </span>
+                    <span>
+                        <i class="bi bi-people-fill"></i>
+                        <span th:text="${participantCount + ' participant' + (participantCount == 1 ? '' : 's')}">5 participants</span>
+                    </span>
+                    <span th:if="${adventure.locationName != null}" th:text="${adventure.locationName}">Location</span>
+                    <span th:if="${isHost}" class="host-role-chip">
+                        <i class="bi bi-shield-check-fill"></i> Hosting
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Message list ─────────────────────────────────────────────── -->
+        <div class="chat-messages" id="msg-list">
+            <div class="msg-list-inner">
+
+                <!-- Error flash -->
+                <div class="chat-error" th:if="${chatError}">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span th:text="${chatError}">Error message</span>
+                </div>
+
+                <!-- Empty state -->
+                <div class="empty-state" th:if="${messages.empty}">
+                    <i class="bi bi-chat-square-dots empty-icon"></i>
+                    <p class="empty-title">No messages yet.</p>
+                    <p class="empty-sub">Start the conversation and coordinate your adventure.</p>
+                </div>
+
+                <!-- Messages -->
+                <div th:unless="${messages.empty}">
+                    <div class="msg-item" th:each="msg : ${messages}">
+
+                        <div class="msg-avatar"
+                             th:classappend="${msg.sender.id == currentUserId ? ' own' : ''}"
+                             th:text="${#strings.substring(msg.sender.name, 0, 1).toUpperCase()}">A</div>
+
+                        <div class="msg-body">
+                            <div class="msg-header">
+                                <span class="msg-sender"
+                                      th:text="${msg.sender.id == currentUserId ? 'You' : msg.sender.name}">Name</span>
+                                <span class="host-badge" th:if="${msg.sender.id == hostId}">Host</span>
+                                <span class="msg-time"
+                                      th:text="${#temporals.format(msg.createdAt, 'MMM d, h:mm a')}">Jun 7, 10:42 AM</span>
+                            </div>
+                            <div th:class="${'msg-bubble' + (msg.sender.id == currentUserId ? ' own' : '')}">
+                                <p class="msg-content" th:text="${msg.content}">Message content</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /chat-messages -->
+
+        <!-- ── Composer ─────────────────────────────────────────────────── -->
+        <div class="chat-composer">
+            <div class="composer-inner">
+                <form class="composer-form" method="post"
+                      th:action="@{/adventures/{id}/chat/messages(id=${adventure.id})}">
+                    <textarea class="msg-textarea"
+                              name="content"
+                              placeholder="Share details, ask questions, coordinate your adventure..."
+                              maxlength="2000"
+                              autocomplete="off"></textarea>
+                    <div class="composer-actions">
+                        <span class="char-hint">Max 2,000 characters</span>
+                        <button type="submit" class="btn-send">
+                            <i class="bi bi-send-fill"></i> Send
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div><!-- /chat-outer -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Scroll message list to bottom on load so latest messages are visible.
+        (function () {
+            const list = document.getElementById('msg-list');
+            if (list) list.scrollTop = list.scrollHeight;
+        })();
+
+        // Client-side guard: prevent submitting an empty or whitespace-only message.
+        document.querySelector('.composer-form').addEventListener('submit', function (e) {
+            const ta  = this.querySelector('textarea[name="content"]');
+            const btn = this.querySelector('.btn-send');
+            if (!ta.value.trim()) {
+                e.preventDefault();
+                ta.focus();
+                return;
+            }
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-send-fill"></i> Sending…';
+        });
+    </script>
+</body>
+</html>
