@@ -11,14 +11,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         :root {
-            --brand:      #FF6B2B;
-            --brand-dark: #E55A1A;
-            --brand-soft: #FFF1EA;
-            --brand-glow: rgba(255, 107, 43, 0.25);
-            --ink:        #111827;
-            --muted:      #6B7280;
-            --line:       #ECECEC;
-            --bg:         #FAFAFA;
+            --ink:         #0F172A;
+            --bg:          #F8FAFC;
+            --surface:     #FFFFFF;
+            --border:      #E2E8F0;
+            --muted:       #64748B;
+            --subtle:      #94A3B8;
+            --brand:       #1E293B;
+            --accent:      #F59E0B;
+            --accent-dark: #D97706;
+            --accent-faint:#FFFBEB;
+            --brand-soft:  var(--accent-faint);
+            --brand-dark:  var(--accent-dark);
+            --brand-glow:  rgba(0,0,0,0);
+            --line:        var(--border);
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -41,9 +47,10 @@
         }
 
         .app-header .inner {
-            max-width: 1180px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0.75rem 1.25rem;
+            padding: 0 1.5rem;
+            height: 60px;
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -52,12 +59,11 @@
         .brand { display: inline-flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
 
         .brand .logo-mark {
-            width: 36px; height: 36px;
+            width: 32px; height: 32px;
             background: var(--brand);
-            border-radius: 10px;
+            border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
             color: #fff; font-size: 1rem;
-            box-shadow: 0 4px 12px var(--brand-glow);
         }
 
         .brand .logo-name { font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; }
@@ -67,56 +73,79 @@
 
         .btn-ghost {
             display: inline-flex; align-items: center; gap: 0.4rem;
-            height: 42px; padding: 0 0.95rem;
-            border: 1px solid var(--line); border-radius: 100px;
+            height: 36px; padding: 0 0.95rem;
+            border: 1px solid var(--line); border-radius: 8px;
             background: #fff; color: var(--ink);
             font-size: 0.875rem; font-weight: 600;
-            transition: box-shadow 0.18s, border-color 0.18s;
+            transition: border-color 0.15s;
         }
 
-        .btn-ghost:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); border-color: #DADADA; color: var(--ink); }
+        .btn-ghost:hover { border-color: #CBD5E1; color: var(--ink); }
 
         .btn-brand {
-            display: inline-flex; align-items: center; gap: 0.45rem;
-            height: 42px; padding: 0 1.1rem;
-            border: none; border-radius: 100px;
-            background: #FF6B2B; background: var(--brand);
-            color: #fff; font-size: 0.875rem; font-weight: 600;
-            box-shadow: 0 4px 14px var(--brand-glow);
-            transition: background 0.18s, transform 0.1s;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            height: 36px; padding: 0 1rem;
+            border: none; border-radius: 8px;
+            background: var(--accent);
+            color: var(--ink); font-size: 0.875rem; font-weight: 600;
+            transition: background 0.15s, transform 0.1s;
         }
 
-        .btn-brand:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+        .btn-brand:hover { background: var(--accent-dark); color: var(--ink); transform: translateY(-1px); }
 
         .profile-btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            height: 42px; padding: 0 0.35rem 0 0.85rem;
-            border: 1px solid var(--line); border-radius: 100px;
+            height: 36px; padding: 0 0.35rem 0 0.85rem;
+            border: 1px solid var(--line); border-radius: 8px;
             background: #fff; color: var(--ink); font-weight: 600; font-size: 0.875rem;
         }
 
-        .profile-btn:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); color: var(--ink); }
+        .profile-btn:hover { border-color: #CBD5E1; color: var(--ink); }
 
         .avatar {
-            width: 30px; height: 30px; border-radius: 50%;
-            background: var(--brand-soft); color: var(--brand);
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--accent-faint); color: var(--brand);
+            border: 1.5px solid var(--border);
             display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
         }
 
         .dropdown-menu {
-            border: 1px solid var(--line); border-radius: 14px;
-            box-shadow: 0 12px 34px rgba(0,0,0,0.12);
-            padding: 0.4rem; min-width: 210px;
+            border: 1px solid var(--line); border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            padding: 0.375rem; min-width: 220px;
         }
 
         .dropdown-item {
-            border-radius: 9px; padding: 0.6rem 0.7rem;
-            font-size: 0.9rem; font-weight: 500;
+            border-radius: 8px; padding: 0.55rem 0.75rem;
+            font-size: 0.875rem; font-weight: 500;
             display: flex; align-items: center; gap: 0.6rem;
+            color: var(--ink);
         }
 
-        .dropdown-item i { color: var(--muted); width: 18px; }
+        .dropdown-item i { color: var(--subtle); width: 16px; }
+        .dropdown-item.active { background: var(--accent-faint); color: var(--ink); font-weight: 600; }
+        .dropdown-item.active i { color: var(--accent-dark); }
+        .dropdown-item:hover { background: var(--bg); color: var(--ink); }
+
+        .btn-notif {
+            position: relative;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border: 1px solid var(--line); border-radius: 8px;
+            background: #fff; color: var(--ink);
+            transition: border-color 0.15s;
+            flex-shrink: 0;
+        }
+        .btn-notif:hover { border-color: #CBD5E1; color: var(--ink); }
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            min-width: 16px; height: 16px; padding: 0 3px;
+            border-radius: 100px; background: var(--accent); color: var(--ink);
+            font-size: 0.62rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1; border: 2px solid #fff;
+        }
 
         /* ── Filter bar ────────────────────────────────────────────────────── */
         .filter-section {
@@ -227,7 +256,6 @@
             padding: 0 1.4rem;
             border: none;
             border-radius: 10px;
-            background: #FF6B2B;
             background: var(--brand);
             color: #fff;
             font-size: 0.88rem;
@@ -254,9 +282,9 @@
 
         /* ── Page body ─────────────────────────────────────────────────────── */
         .container-app {
-            max-width: 1180px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 1.75rem 1.25rem 4rem;
+            padding: 2rem 1.5rem 4rem;
         }
 
         /* ── Results meta ──────────────────────────────────────────────────── */
@@ -294,8 +322,8 @@
 
         .adv-card {
             background: #fff;
-            border: 1px solid var(--line);
-            border-radius: 18px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -303,8 +331,8 @@
         }
 
         .adv-card:hover {
-            box-shadow: 0 14px 34px rgba(0,0,0,0.10);
-            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+            transform: translateY(-2px);
         }
 
         .adv-cover {
@@ -328,7 +356,7 @@
         .adv-cover-placeholder::before {
             content: '';
             position: absolute; bottom: 0; left: 0; right: 0; height: 44%;
-            background: rgba(255,107,43,0.08);
+            background: rgba(245,158,11,0.08);
             clip-path: polygon(0% 100%, 12% 60%, 25% 78%, 40% 38%, 55% 62%, 70% 28%, 85% 52%, 100% 35%, 100% 100%);
         }
 
@@ -337,13 +365,13 @@
             content: '';
             position: absolute; top: -40px; right: -40px;
             width: 130px; height: 130px;
-            background: radial-gradient(circle, rgba(255,107,43,0.18) 0%, transparent 65%);
+            background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 65%);
             border-radius: 50%;
         }
 
         .placeholder-icon {
             position: relative; z-index: 1;
-            color: rgba(255,107,43,0.65); font-size: 2.2rem;
+            color: rgba(245,158,11,0.65); font-size: 2.2rem;
         }
 
         .placeholder-label {
@@ -381,7 +409,7 @@
             margin-bottom: 0.3rem;
         }
 
-        .adv-meta i { color: var(--brand); font-size: 0.85rem; width: 14px; }
+        .adv-meta i { color: var(--subtle); font-size: 0.85rem; width: 14px; }
 
         .adv-host {
             display: flex; align-items: center; gap: 0.45rem;
@@ -391,7 +419,7 @@
 
         .host-avatar {
             width: 22px; height: 22px; border-radius: 50%;
-            background: var(--brand-soft); color: var(--brand);
+            background: var(--accent-faint); color: var(--accent-dark);
             display: flex; align-items: center; justify-content: center;
             font-size: 0.67rem; font-weight: 700; flex-shrink: 0;
         }
@@ -403,7 +431,7 @@
 
         .adv-tag {
             font-size: 0.72rem; font-weight: 600;
-            color: var(--brand); background: var(--brand-soft);
+            color: var(--accent-dark); background: var(--accent-faint);
             padding: 0.25rem 0.6rem; border-radius: 100px;
         }
 
@@ -423,19 +451,19 @@
         .empty-state {
             background: #fff;
             border: 1px solid var(--line);
-            border-radius: 20px;
+            border-radius: 12px;
             padding: 4rem 2rem;
             text-align: center;
         }
 
         .empty-icon {
-            width: 80px; height: 80px; margin: 0 auto 1.35rem;
-            border-radius: 22px; background: var(--brand-soft); color: var(--brand);
-            display: flex; align-items: center; justify-content: center; font-size: 2.2rem;
+            width: 56px; height: 56px; margin: 0 auto 1.35rem;
+            border-radius: 12px; background: var(--accent-faint); color: var(--accent-dark);
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
         }
 
         .empty-title {
-            font-size: 1.45rem; font-weight: 800; letter-spacing: -0.5px;
+            font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px;
             margin-bottom: 0.55rem;
         }
 
@@ -446,14 +474,31 @@
 
         .btn-back {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            height: 48px; padding: 0 1.6rem; border-radius: 12px;
-            background: #FF6B2B; background: var(--brand); color: #fff;
-            font-weight: 700; font-size: 0.95rem;
-            box-shadow: 0 4px 16px var(--brand-glow);
+            height: 42px; padding: 0 1.5rem; border-radius: 8px;
+            background: var(--accent); color: var(--ink);
+            font-weight: 700; font-size: 0.9rem;
             transition: background 0.18s, transform 0.1s;
         }
 
-        .btn-back:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+        .btn-back:hover { background: var(--accent-dark); color: var(--ink); transform: translateY(-1px); }
+
+        /* ── Capacity badges ───────────────────────────────────────────────── */
+        .spots-full-badge {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-size: 0.72rem; font-weight: 800;
+            color: #fff; background: #DC2626;
+            padding: 0.22rem 0.55rem; border-radius: 6px;
+            letter-spacing: 0.3px; text-transform: uppercase;
+        }
+
+        .adv-full-overlay {
+            position: absolute; top: 0.7rem; right: 0.7rem;
+            font-size: 0.68rem; font-weight: 800;
+            color: #fff; background: #DC2626;
+            padding: 0.28rem 0.6rem; border-radius: 6px;
+            letter-spacing: 0.4px; text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(220,38,38,0.45);
+        }
 
         /* ── Responsive ────────────────────────────────────────────────────── */
         @media (max-width: 900px) {
@@ -478,7 +523,13 @@
         <div class="inner">
 
             <a th:href="@{/dashboard}" class="brand">
-                <span class="logo-mark"><i class="bi bi-compass-fill"></i></span>
+                <span class="logo-mark">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11.5" cy="4.5" r="2.5" fill="white"/>
+                        <line x1="4.5" y1="12.5" x2="11.5" y2="4.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                        <circle cx="4.5" cy="12.5" r="1.5" fill="rgba(255,255,255,0.55)"/>
+                    </svg>
+                </span>
                 <span class="logo-name">ChalO</span>
             </a>
 
@@ -497,6 +548,12 @@
                     <span class="label-hide">Host Adventure</span>
                 </a>
 
+                <a th:href="@{/notifications}" class="btn-notif" title="Notifications">
+                    <i class="bi bi-bell-fill" style="font-size:0.95rem;"></i>
+                    <span class="notif-badge" th:if="${unreadNotificationCount > 0}"
+                          th:text="${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}">3</span>
+                </a>
+
                 <div class="dropdown">
                     <button class="profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="avatar" th:text="${#strings.substring(userName, 0, 1).toUpperCase()}">A</span>
@@ -510,8 +567,10 @@
                             </span>
                         </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="bi bi-grid"></i> Dashboard</a></li>
                         <li><a class="dropdown-item" th:href="@{/my-adventures}"><i class="bi bi-backpack2"></i> My Adventures</a></li>
+                        <li><a class="dropdown-item" th:href="@{/my-crews}"><i class="bi bi-people"></i> My Crews</a></li>
+                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form th:action="@{/logout}" method="post" class="m-0">
@@ -612,6 +671,9 @@
                         <i class="bi bi-calendar-event"></i>
                         <span th:text="${#temporals.format(adv.adventureDate, 'EEE, dd MMM yyyy')}">Sat, 14 Jun 2026</span>
                     </span>
+                    <!-- FULL overlay badge (top-right) -->
+                    <span th:if="${(slotsLeftMap[adv.id] ?: adv.maxParticipants) <= 0}"
+                          class="adv-full-overlay">FULL</span>
                 </div>
 
                 <!-- Card body -->
@@ -624,9 +686,18 @@
                         <span th:text="${adv.locationName} ?: 'Location TBD'">Location</span>
                     </div>
 
-                    <div class="adv-meta">
-                        <i class="bi bi-people-fill"></i>
-                        <span>Up to <strong th:text="${adv.maxParticipants}">8</strong> adventurers</span>
+                    <!-- Capacity: FULL badge or X Spots Left -->
+                    <div class="adv-meta" th:with="sl=${slotsLeftMap[adv.id] ?: adv.maxParticipants}">
+                        <span th:if="${sl <= 0}" class="spots-full-badge">
+                            <i class="bi bi-slash-circle-fill" style="font-size:0.72rem;"></i> FULL
+                        </span>
+                        <th:block th:unless="${sl <= 0}">
+                            <i class="bi bi-people-fill"></i>
+                            <span>
+                                <strong th:text="${sl}">5</strong>
+                                <span th:text="${sl == 1 ? 'Spot Left' : 'Spots Left'}">Spots Left</span>
+                            </span>
+                        </th:block>
                     </div>
 
                     <div class="adv-host">
@@ -664,6 +735,15 @@
 
     </div>
 
+    <footer style="border-top:1px solid #E2E8F0; padding:1.25rem 1.5rem; margin-top:2rem;">
+        <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-size:0.75rem; color:#94A3B8; font-weight:500;">© 2026 ChalO</span>
+            <div style="display:flex; gap:1.5rem;">
+                <a href="#" style="font-size:0.75rem; color:#94A3B8; font-weight:500; text-decoration:none;">Privacy</a>
+                <a href="#" style="font-size:0.75rem; color:#94A3B8; font-weight:500; text-decoration:none;">Terms</a>
+            </div>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

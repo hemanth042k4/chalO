@@ -11,14 +11,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         :root {
-            --brand:       #FF6B2B;
-            --brand-dark:  #E55A1A;
-            --brand-soft:  #FFF1EA;
-            --brand-glow:  rgba(255, 107, 43, 0.25);
-            --ink:         #111827;
-            --muted:       #6B7280;
-            --line:        #ECECEC;
-            --bg:          #FAFAFA;
+            --ink:         #0F172A;
+            --bg:          #F8FAFC;
+            --surface:     #FFFFFF;
+            --border:      #E2E8F0;
+            --muted:       #64748B;
+            --subtle:      #94A3B8;
+            --brand:       #1E293B;
+            --accent:      #F59E0B;
+            --accent-dark: #D97706;
+            --accent-faint:#FFFBEB;
+            /* Legacy aliases — neutralise orange glow, remap soft tints */
+            --brand-soft:  var(--accent-faint);
+            --brand-dark:  var(--accent-dark);
+            --brand-glow:  rgba(0,0,0,0);
+            --line:        var(--border);
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -41,142 +48,160 @@
         }
 
         .app-header .inner {
-            max-width: 1180px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0.75rem 1.25rem;
+            padding: 0 1.5rem;
+            height: 60px;
             display: flex;
             align-items: center;
             gap: 1rem;
         }
 
-        .brand { display: inline-flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
+        .brand { display: inline-flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
 
         .brand .logo-mark {
-            width: 36px; height: 36px;
+            width: 32px; height: 32px;
             background: var(--brand);
-            border-radius: 10px;
+            border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 1rem;
-            box-shadow: 0 4px 12px var(--brand-glow);
+            color: #fff;
         }
 
-        .brand .logo-name { font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; }
+        .brand .logo-name { font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.04em; }
 
         .header-spacer { flex: 1; }
         .header-actions { display: flex; align-items: center; gap: 0.6rem; }
 
         .btn-brand {
-            display: inline-flex; align-items: center; gap: 0.45rem;
-            height: 42px; padding: 0 1.1rem;
-            border: none; border-radius: 100px;
-            background: #FF6B2B; background: var(--brand);
-            color: #fff; font-size: 0.875rem; font-weight: 600;
-            box-shadow: 0 4px 14px var(--brand-glow);
-            transition: background 0.18s, transform 0.1s;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            height: 36px; padding: 0 1rem;
+            border: none; border-radius: 8px;
+            background: var(--accent);
+            color: var(--ink); font-size: 0.875rem; font-weight: 600;
+            transition: background 0.15s, transform 0.1s;
         }
 
-        .btn-brand:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+        .btn-brand:hover { background: var(--accent-dark); color: var(--ink); transform: translateY(-1px); }
 
         .profile-btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            height: 42px; padding: 0 0.35rem 0 0.85rem;
-            border: 1px solid var(--line); border-radius: 100px;
+            height: 36px; padding: 0 0.5rem 0 0.75rem;
+            border: 1px solid var(--border); border-radius: 8px;
             background: #fff; color: var(--ink); font-weight: 600; font-size: 0.875rem;
         }
 
-        .profile-btn:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); color: var(--ink); }
+        .profile-btn:hover { border-color: #CBD5E1; color: var(--ink); }
 
         .avatar {
-            width: 30px; height: 30px; border-radius: 50%;
-            background: var(--brand-soft); color: var(--brand);
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--accent-faint); color: var(--brand);
             display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+            font-weight: 700; font-size: 0.75rem; flex-shrink: 0;
+            border: 1.5px solid var(--border);
         }
 
         .dropdown-menu {
-            border: 1px solid var(--line); border-radius: 14px;
-            box-shadow: 0 12px 34px rgba(0,0,0,0.12);
-            padding: 0.4rem; min-width: 210px;
+            border: 1px solid var(--border); border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            padding: 0.375rem; min-width: 220px;
         }
 
-        .dropdown-item { border-radius: 9px; padding: 0.6rem 0.7rem; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 0.6rem; }
-        .dropdown-item i { color: var(--muted); width: 18px; }
+        .dropdown-item { border-radius: 8px; padding: 0.55rem 0.75rem; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 0.6rem; color: var(--ink); }
+        .dropdown-item i { color: var(--subtle); width: 16px; }
+        .dropdown-item:hover { background: var(--bg); color: var(--ink); }
+        .dropdown-item.active { background: var(--accent-faint); color: var(--ink); font-weight: 600; }
+        .dropdown-item.active i { color: var(--accent-dark); }
 
-        /* ── Page container ───────────────────────────────────────────── */
-        .container-app { max-width: 1180px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+        .btn-notif {
+            position: relative;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border: 1px solid var(--border); border-radius: 8px;
+            background: #fff; color: var(--ink);
+            transition: border-color 0.15s;
+            flex-shrink: 0;
+        }
+        .btn-notif:hover { border-color: #CBD5E1; color: var(--ink); }
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            min-width: 16px; height: 16px; padding: 0 3px;
+            border-radius: 100px; background: var(--accent); color: var(--ink);
+            font-size: 0.6rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1; border: 2px solid #fff;
+        }
+
+        /* ── Page container ─────────────────────────────────────────────── */
+        .container-app { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
 
         .page-head { margin-bottom: 1.75rem; }
-        .page-eyebrow { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--brand); margin-bottom: 0.4rem; }
-        .page-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 0.35rem; }
-        .page-sub { color: var(--muted); font-size: 0.95rem; }
+        .page-eyebrow { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-dark); margin-bottom: 0.4rem; }
+        .page-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.35rem; }
+        .page-sub { color: var(--muted); font-size: 0.9375rem; }
 
-        /* ── Section ──────────────────────────────────────────────────── */
-        .section { margin-bottom: 2.75rem; }
+        /* ── Section ─────────────────────────────────────────────────────── */
+        .section { margin-bottom: 2.5rem; }
 
         .section-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem; }
-        .section-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; }
+        .section-title { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.03em; }
         .section-count {
-            font-size: 0.78rem; font-weight: 700; color: var(--brand);
-            background: var(--brand-soft); border-radius: 100px; padding: 0.15rem 0.6rem;
+            font-size: 0.75rem; font-weight: 700; color: var(--accent-dark);
+            background: var(--accent-faint); border-radius: 100px; padding: 0.15rem 0.6rem;
         }
 
-        /* ── Adventure cards ──────────────────────────────────────────── */
-        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+        /* ── Adventure cards ─────────────────────────────────────────────── */
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
 
         .adv-card {
-            background: #fff; border: 1px solid var(--line); border-radius: 18px;
+            background: #fff; border: 1px solid var(--border); border-radius: 10px;
             overflow: hidden; display: flex; flex-direction: column;
             transition: box-shadow 0.2s, transform 0.15s;
         }
 
-        .adv-card:hover { box-shadow: 0 14px 34px rgba(0,0,0,0.10); transform: translateY(-3px); }
+        .adv-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); }
 
-        .adv-cover { position: relative; aspect-ratio: 3 / 2; background: #EEE; overflow: hidden; }
+        .adv-cover { position: relative; aspect-ratio: 3 / 2; background: var(--bg); overflow: hidden; }
         .adv-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         .adv-cover-placeholder {
             width: 100%; height: 100%;
-            background: linear-gradient(145deg, #0D1B2A 0%, #162032 40%, #1D3545 70%, #12263A 100%);
+            background: linear-gradient(145deg, #0F172A 0%, #1E293B 60%, #334155 100%);
             display: flex; flex-direction: column;
             align-items: center; justify-content: center; gap: 0.5rem;
             position: relative; overflow: hidden;
         }
 
-        /* Mountain silhouette */
         .adv-cover-placeholder::before {
             content: '';
             position: absolute; bottom: 0; left: 0; right: 0; height: 44%;
-            background: rgba(255,107,43,0.08);
+            background: rgba(245,158,11,0.08);
             clip-path: polygon(0% 100%, 12% 60%, 25% 78%, 40% 38%, 55% 62%, 70% 28%, 85% 52%, 100% 35%, 100% 100%);
         }
 
-        /* Warm glow accent top-right */
         .adv-cover-placeholder::after {
             content: '';
             position: absolute; top: -40px; right: -40px;
             width: 130px; height: 130px;
-            background: radial-gradient(circle, rgba(255,107,43,0.18) 0%, transparent 65%);
+            background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 65%);
             border-radius: 50%;
         }
 
         .placeholder-icon {
             position: relative; z-index: 1;
-            color: rgba(255,107,43,0.65); font-size: 2.2rem;
+            color: rgba(245,158,11,0.5); font-size: 2rem;
         }
 
         .placeholder-label {
             position: relative; z-index: 1;
-            color: rgba(255,255,255,0.3);
-            font-size: 0.68rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.25);
+            font-size: 0.65rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
         }
 
-        /* Status pill on cover */
         .status-pill {
-            position: absolute; top: 0.7rem; right: 0.7rem;
-            font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-            padding: 0.3rem 0.6rem; border-radius: 100px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12); background: #fff;
+            position: absolute; top: 0.6rem; right: 0.6rem;
+            font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+            padding: 0.25rem 0.55rem; border-radius: 6px;
         }
 
         .status-published { color: #15803D; background: #DCFCE7; }
@@ -184,132 +209,165 @@
         .status-completed { color: #1D4ED8; background: #DBEAFE; }
         .status-cancelled { color: #B91C1C; background: #FEE2E2; }
 
-        .adv-body { padding: 0.95rem 1rem 1.05rem; display: flex; flex-direction: column; flex: 1; }
-        .adv-title { font-size: 1rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.55rem; }
+        .adv-body { padding: 0.875rem 1rem 1rem; display: flex; flex-direction: column; flex: 1; }
+        .adv-title { font-size: 0.9375rem; font-weight: 700; line-height: 1.4; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
 
-        .adv-meta { display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.3rem; }
-        .adv-meta i { color: var(--brand); font-size: 0.85rem; width: 14px; }
+        .adv-meta { display: flex; align-items: center; gap: 0.35rem; font-size: 0.8125rem; color: var(--muted); margin-bottom: 0.25rem; }
+        .adv-meta i { color: var(--subtle); font-size: 0.8125rem; width: 14px; }
 
-        .adv-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
-        .adv-tag { font-size: 0.72rem; font-weight: 600; color: var(--brand); background: var(--brand-soft); padding: 0.25rem 0.6rem; border-radius: 100px; }
+        .adv-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.5rem 0 0.75rem; }
+        .adv-tag { font-size: 0.6875rem; font-weight: 600; color: var(--accent-dark); background: var(--accent-faint); padding: 0.2rem 0.55rem; border-radius: 100px; }
 
         /* Card actions */
-        .adv-actions { display: flex; gap: 0.5rem; margin-top: auto; }
+        .adv-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; }
 
         .btn-card {
             flex: 1;
             display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
-            height: 40px; border-radius: 10px;
-            font-size: 0.82rem; font-weight: 600;
-            border: 1px solid var(--line); background: #fff; color: var(--ink);
+            height: 36px; border-radius: 8px;
+            font-size: 0.8125rem; font-weight: 600;
+            border: 1px solid var(--border); background: #fff; color: var(--ink);
             transition: all 0.15s;
         }
 
-        .btn-card:hover { border-color: #DADADA; box-shadow: 0 2px 10px rgba(0,0,0,0.06); color: var(--ink); }
+        .btn-card:hover { border-color: #CBD5E1; box-shadow: 0 1px 6px rgba(0,0,0,0.06); color: var(--ink); }
 
         .btn-card.primary {
-            border: none; background: var(--brand-soft); color: var(--brand);
+            border: none; background: var(--accent-faint); color: var(--accent-dark);
         }
-        .btn-card.primary:hover { background: #FFE3D6; color: var(--brand-dark); }
+        .btn-card.primary:hover { background: #FEF3C7; color: var(--accent-dark); }
 
-        /* ── Empty / placeholder state ────────────────────────────────── */
+        /* ── Empty / placeholder state ───────────────────────────────────── */
         .empty-state {
-            background: #fff; border: 1px solid var(--line); border-radius: 20px;
+            background: #fff; border: 1px solid var(--border); border-radius: 12px;
             padding: 3rem 2rem; text-align: center;
         }
 
         .empty-icon {
-            width: 72px; height: 72px; margin: 0 auto 1.25rem;
-            border-radius: 20px; background: var(--brand-soft); color: var(--brand);
-            display: flex; align-items: center; justify-content: center; font-size: 2rem;
+            width: 56px; height: 56px; margin: 0 auto 1.25rem;
+            border-radius: 12px; background: var(--accent-faint); color: var(--accent-dark);
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
         }
 
-        .empty-title { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 0.5rem; }
-        .empty-sub { color: var(--muted); font-size: 0.95rem; max-width: 420px; margin: 0 auto 1.5rem; }
+        .empty-title { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+        .empty-sub { color: var(--muted); font-size: 0.9375rem; max-width: 400px; margin: 0 auto 1.5rem; line-height: 1.6; }
 
         .btn-empty {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            height: 48px; padding: 0 1.6rem; border-radius: 12px;
-            background: #FF6B2B; background: var(--brand); color: #fff;
-            font-weight: 700; font-size: 0.95rem;
-            box-shadow: 0 4px 16px var(--brand-glow);
-            transition: background 0.18s, transform 0.1s;
+            height: 42px; padding: 0 1.5rem; border-radius: 8px;
+            background: var(--accent); color: var(--ink);
+            font-weight: 700; font-size: 0.9rem;
+            transition: background 0.15s, transform 0.1s;
         }
 
-        .btn-empty:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+        .btn-empty:hover { background: var(--accent-dark); color: var(--ink); transform: translateY(-1px); }
 
         .placeholder-state {
-            background: #fff; border: 1px dashed #D6D6D6; border-radius: 18px;
-            padding: 2.25rem 2rem; text-align: center; color: var(--muted);
+            background: #fff; border: 1px dashed var(--border); border-radius: 10px;
+            padding: 2rem; text-align: center; color: var(--muted);
         }
 
-        .placeholder-state .ph-icon { font-size: 1.8rem; color: #C9CDD4; margin-bottom: 0.6rem; }
-        .placeholder-state h3 { font-size: 1.05rem; font-weight: 700; color: var(--ink); margin-bottom: 0.35rem; }
-        .placeholder-state p { font-size: 0.9rem; margin-bottom: 1.1rem; }
+        .placeholder-state .ph-icon { font-size: 1.5rem; color: var(--subtle); margin-bottom: 0.5rem; }
+        .placeholder-state h3 { font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.3rem; }
+        .placeholder-state p { font-size: 0.875rem; margin-bottom: 1rem; }
 
         .btn-outline {
             display: inline-flex; align-items: center; gap: 0.45rem;
-            height: 44px; padding: 0 1.3rem; border-radius: 11px;
-            border: 1.5px solid var(--brand); background: #fff; color: var(--brand);
-            font-weight: 600; font-size: 0.9rem; transition: all 0.15s;
+            height: 40px; padding: 0 1.25rem; border-radius: 8px;
+            border: 1.5px solid var(--accent); background: #fff; color: var(--accent-dark);
+            font-weight: 600; font-size: 0.875rem; transition: all 0.15s;
         }
 
-        .btn-outline:hover { background: var(--brand); color: #fff; }
+        .btn-outline:hover { background: var(--accent-faint); color: var(--accent-dark); }
 
         /* ── Joined / pending-outgoing pill on card cover ────────────── */
         .pill-joined {
-            position: absolute; top: 0.7rem; right: 0.7rem;
-            font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-            padding: 0.22rem 0.6rem; border-radius: 8px;
+            position: absolute; top: 0.6rem; right: 0.6rem;
+            font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+            padding: 0.2rem 0.55rem; border-radius: 6px;
             color: #15803D; background: #DCFCE7;
         }
 
         .pill-pending-req {
-            position: absolute; top: 0.7rem; right: 0.7rem;
-            font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-            padding: 0.22rem 0.6rem; border-radius: 8px;
+            position: absolute; top: 0.6rem; right: 0.6rem;
+            font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+            padding: 0.2rem 0.55rem; border-radius: 6px;
             color: #92400E; background: #FEF3C7;
         }
 
-        /* Accepted banner strip below card title */
         .accepted-banner {
             display: flex; align-items: center; gap: 0.45rem;
             font-size: 0.8rem; font-weight: 600; color: #15803D;
-            background: #F0FDF4; border-radius: 8px;
-            padding: 0.4rem 0.75rem; margin-bottom: 0.5rem;
+            background: #F0FDF4; border-radius: 6px;
+            padding: 0.35rem 0.7rem; margin-bottom: 0.5rem;
         }
 
-        /* Pending note strip */
         .pending-note {
             display: flex; align-items: center; gap: 0.45rem;
             font-size: 0.8rem; font-weight: 600; color: #A16207;
-            background: #FEFCE8; border-radius: 8px;
-            padding: 0.4rem 0.75rem; margin-bottom: 0.5rem;
+            background: #FEFCE8; border-radius: 6px;
+            padding: 0.35rem 0.7rem; margin-bottom: 0.5rem;
         }
 
-        /* ── Pending-request badge inside card button ─────────────────── */
         .request-badge {
             display: inline-flex; align-items: center; justify-content: center;
-            min-width: 19px; height: 19px; padding: 0 5px; border-radius: 100px;
-            background: #fff; color: var(--brand);
-            font-size: 0.65rem; font-weight: 800; line-height: 1;
+            min-width: 18px; height: 18px; padding: 0 4px; border-radius: 100px;
+            background: var(--ink); color: #fff;
+            font-size: 0.625rem; font-weight: 800; line-height: 1;
             margin-left: 0.2rem; flex-shrink: 0;
         }
 
-        /* Active state when there are pending requests */
-        .btn-card.primary.has-requests {
-            background: var(--brand); color: #fff;
-            box-shadow: 0 3px 12px var(--brand-glow);
+        .btn-card.danger { border-color: #FECACA; background: #FEF2F2; color: #DC2626; }
+        .btn-card.danger:hover { background: #FEE2E2; border-color: #FCA5A5; color: #DC2626; }
+
+        .btn-modal-keep {
+            height: 40px; padding: 0 1.25rem; border-radius: 8px;
+            border: 1px solid var(--border); background: #fff; color: var(--ink);
+            font-weight: 600; font-size: 0.875rem; cursor: pointer;
+        }
+        .btn-modal-keep:hover { background: var(--bg); }
+        .btn-modal-cancel {
+            height: 40px; padding: 0 1.25rem; border-radius: 8px;
+            border: none; background: #DC2626; color: #fff;
+            font-weight: 700; font-size: 0.875rem; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-modal-cancel:hover { background: #B91C1C; }
+
+        .btn-card.primary.has-requests { background: var(--accent); color: var(--ink); }
+        .btn-card.primary.has-requests:hover { background: var(--accent-dark); color: var(--ink); }
+
+        .full-badge-inline {
+            font-size: 0.625rem; font-weight: 800;
+            color: #fff; background: #DC2626;
+            padding: 0.1rem 0.4rem; border-radius: 4px;
+            letter-spacing: 0.03em; text-transform: uppercase;
+            vertical-align: middle; margin-left: 0.3rem;
         }
 
-        .btn-card.primary.has-requests:hover { background: var(--brand-dark); color: #fff; }
+        /* ── Flash banners ───────────────────────────────────────────── */
+        .flash-success {
+            display: flex; align-items: center; gap: 0.75rem;
+            background: #DCFCE7; border: 1px solid #BBF7D0; border-radius: 12px;
+            padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+        }
+        .flash-success i { color: #15803D; font-size: 1.25rem; flex-shrink: 0; }
+        .flash-success strong { font-size: 0.93rem; color: #14532D; }
 
-        /* ── Responsive ───────────────────────────────────────────────── */
+        .cancelled-banner {
+            display: flex; align-items: center; gap: 0.45rem;
+            font-size: 0.8rem; font-weight: 600; color: #B91C1C;
+            background: #FEF2F2; border-radius: 8px;
+            padding: 0.4rem 0.75rem; margin-bottom: 0.5rem;
+        }
+
+        /* ── Responsive ──────────────────────────────────────────────── */
         @media (max-width: 900px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) {
             .card-grid { grid-template-columns: 1fr; }
             .header-actions .label-hide { display: none; }
-            .page-title { font-size: 1.6rem; }
+            .page-title { font-size: 1.5rem; }
+            .btn-card { min-width: calc(50% - 0.25rem); }
         }
     </style>
 </head>
@@ -319,7 +377,13 @@
     <header class="app-header">
         <div class="inner">
             <a th:href="@{/dashboard}" class="brand">
-                <span class="logo-mark"><i class="bi bi-compass-fill"></i></span>
+                <span class="logo-mark">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11.5" cy="4.5" r="2.5" fill="white"/>
+                        <line x1="4.5" y1="12.5" x2="11.5" y2="4.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                        <circle cx="4.5" cy="12.5" r="1.5" fill="rgba(255,255,255,0.55)"/>
+                    </svg>
+                </span>
                 <span class="logo-name">ChalO</span>
             </a>
 
@@ -329,6 +393,12 @@
                 <a th:href="@{/adventures/new}" class="btn-brand">
                     <i class="bi bi-plus-lg"></i>
                     <span class="label-hide">Host Adventure</span>
+                </a>
+
+                <a th:href="@{/notifications}" class="btn-notif" title="Notifications">
+                    <i class="bi bi-bell-fill" style="font-size:0.95rem;"></i>
+                    <span class="notif-badge" th:if="${unreadNotificationCount > 0}"
+                          th:text="${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}">3</span>
                 </a>
 
                 <div class="dropdown">
@@ -345,6 +415,8 @@
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="bi bi-grid"></i> Dashboard</a></li>
+                        <li><a class="dropdown-item active" th:href="@{/my-adventures}"><i class="bi bi-backpack2"></i> My Adventures</a></li>
+                        <li><a class="dropdown-item" th:href="@{/my-crews}"><i class="bi bi-people"></i> My Crews</a></li>
                         <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
@@ -362,6 +434,18 @@
 
     <!-- ── Page body ────────────────────────────────────────────────────── -->
     <div class="container-app">
+
+        <!-- Create success flash -->
+        <div th:if="${createSuccess}" class="flash-success">
+            <i class="bi bi-check-circle-fill"></i>
+            <strong th:text="${createSuccess}">Adventure created.</strong>
+        </div>
+
+        <!-- Cancel success flash -->
+        <div th:if="${cancelSuccess}" class="flash-success">
+            <i class="bi bi-check-circle-fill"></i>
+            <strong th:text="${cancelSuccess}">Cancelled.</strong>
+        </div>
 
         <div class="page-head">
             <p class="page-eyebrow">My Adventures</p>
@@ -406,9 +490,10 @@
                             <i class="bi bi-calendar-event"></i>
                             <span th:text="${#temporals.format(adv.adventureDate, 'EEE, dd MMM yyyy')}">Date</span>
                         </div>
-                        <div class="adv-meta">
+                        <div class="adv-meta" th:with="accepted=${hostedAcceptedCounts[adv.id] ?: 0}">
                             <i class="bi bi-people-fill"></i>
-                            <span><strong th:text="${adv.maxParticipants}">8</strong> slots</span>
+                            <span>Accepted: <strong th:text="${accepted + ' / ' + adv.maxParticipants}">0 / 8</strong></span>
+                            <span th:if="${accepted >= adv.maxParticipants}" class="full-badge-inline">FULL</span>
                         </div>
 
                         <div class="adv-tags" th:if="${!adv.tags.empty}">
@@ -430,10 +515,26 @@
                                       th:if="${pending > 0}"
                                       th:text="${pending}">3</span>
                             </a>
-                            <a class="btn-card" th:href="@{/adventures/{id}/chat(id=${adv.id})}">
+                            <a class="btn-card"
+                               th:if="${(hostedAcceptedCounts[adv.id] ?: 0) > 0}"
+                               th:href="@{/adventures/{id}/chat(id=${adv.id})}">
                                 <i class="bi bi-chat-dots-fill"></i> Chat
                             </a>
+                            <!-- Cancel button — PUBLISHED only -->
+                            <button type="button"
+                                    class="btn-card danger"
+                                    th:if="${adv.status.name() == 'PUBLISHED'}"
+                                    data-bs-toggle="modal" data-bs-target="#cancelModal"
+                                    th:attr="data-form-id='cancelForm-' + ${adv.id}">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
                         </div>
+
+                        <!-- Hidden cancel form; th:action injects CSRF automatically -->
+                        <form th:id="'cancelForm-' + ${adv.id}"
+                              th:action="@{/adventures/{id}/cancel(id=${adv.id})}"
+                              method="post" class="d-none">
+                        </form>
                     </div>
                 </article>
             </div>
@@ -469,12 +570,16 @@
                             <i class="bi bi-compass-fill placeholder-icon"></i>
                             <span class="placeholder-label">ChalO</span>
                         </div>
-                        <span class="pill-joined">Joined</span>
+                        <span class="pill-joined" th:unless="${jr.adventure.status.name() == 'CANCELLED'}">Joined</span>
+                        <span class="status-pill status-cancelled" th:if="${jr.adventure.status.name() == 'CANCELLED'}">Cancelled</span>
                     </div>
 
                     <div class="adv-body">
-                        <div class="accepted-banner">
+                        <div class="accepted-banner" th:unless="${jr.adventure.status.name() == 'CANCELLED'}">
                             <i class="bi bi-check-circle-fill"></i> Accepted by host
+                        </div>
+                        <div th:if="${jr.adventure.status.name() == 'CANCELLED'}" class="cancelled-banner">
+                            <i class="bi bi-x-octagon-fill"></i> Host cancelled this adventure
                         </div>
 
                         <h3 class="adv-title" th:text="${jr.adventure.title}">Title</h3>
@@ -514,24 +619,25 @@
             </div>
 
             <!-- Empty state for joined section -->
-            <div class="placeholder-state" th:if="${joinedRequests.empty}">
-                <div class="ph-icon"><i class="bi bi-backpack2"></i></div>
-                <h3>No joined adventures yet</h3>
-                <p>Once a host accepts your request, it'll show up here.</p>
-                <a th:href="@{/explore}" class="btn-outline">
+            <div class="empty-state" th:if="${joinedRequests.empty}">
+                <div class="empty-icon"><i class="bi bi-backpack2"></i></div>
+                <h2 class="empty-title">No joined adventures yet.</h2>
+                <p class="empty-sub">Once a host accepts your request, your adventures will appear here.</p>
+                <a th:href="@{/explore}" class="btn-empty">
                     <i class="bi bi-search"></i> Explore Adventures
                 </a>
             </div>
         </section>
 
         <!-- ── Section 3: Pending Outgoing Requests ──────────────────────── -->
-        <section class="section" th:if="${!pendingRequests.empty}">
+        <section class="section">
             <div class="section-head">
                 <h2 class="section-title">Pending Requests</h2>
-                <span class="section-count" th:text="${pendingRequests.size()}">0</span>
+                <span class="section-count" th:if="${!pendingRequests.empty}"
+                      th:text="${pendingRequests.size()}">0</span>
             </div>
 
-            <div class="card-grid">
+            <div class="card-grid" th:if="${!pendingRequests.empty}">
                 <article class="adv-card" th:each="jr : ${pendingRequests}">
                     <div class="adv-cover">
                         <img th:if="${jr.adventure.coverImageUrl}" th:src="${jr.adventure.coverImageUrl}"
@@ -582,10 +688,79 @@
                     </div>
                 </article>
             </div>
+
+            <!-- Empty state for pending section -->
+            <div class="empty-state" th:if="${pendingRequests.empty}">
+                <div class="empty-icon"><i class="bi bi-hourglass"></i></div>
+                <h2 class="empty-title">No pending requests.</h2>
+                <p class="empty-sub">Adventures you've applied to join will appear here while you wait for the host's decision.</p>
+                <a th:href="@{/explore}" class="btn-empty">
+                    <i class="bi bi-search"></i> Explore Adventures
+                </a>
+            </div>
         </section>
 
     </div>
 
+    <!-- ── Cancel Adventure Confirmation Modal ─────────────────────────────── -->
+    <div class="modal fade" id="cancelModal" tabindex="-1"
+         aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"
+                 style="border-radius:12px; border:none; overflow:hidden;
+                        box-shadow:0 16px 40px rgba(0,0,0,0.14);">
+
+                <div class="modal-header"
+                     style="border-bottom:1px solid var(--line); padding:1.35rem 1.5rem;">
+                    <h5 class="modal-title" id="cancelModalLabel"
+                        style="font-weight:800; font-size:1.05rem; letter-spacing:-0.3px;
+                               display:flex; align-items:center; gap:0.45rem;">
+                        <i class="bi bi-exclamation-triangle-fill" style="color:#DC2626;"></i>
+                        Cancel Adventure?
+                    </h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body" style="padding:1.35rem 1.5rem;">
+                    <p style="color:var(--muted); font-size:0.95rem; margin:0;">
+                        This will notify all accepted participants and remove the adventure
+                        from discovery. This action cannot be undone.
+                    </p>
+                </div>
+
+                <div class="modal-footer"
+                     style="border-top:1px solid var(--line); padding:1rem 1.5rem; gap:0.6rem;
+                            display:flex; justify-content:flex-end;">
+                    <button type="button" class="btn-modal-keep"
+                            data-bs-dismiss="modal">Keep Adventure</button>
+                    <button type="button" id="confirmCancelBtn" class="btn-modal-cancel">
+                        Cancel Adventure
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer style="border-top:1px solid #E2E8F0; padding:1.25rem 1.5rem; margin-top:2rem;">
+        <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-size:0.75rem; color:#94A3B8; font-weight:500;">© 2026 ChalO</span>
+            <div style="display:flex; gap:1.5rem;">
+                <a href="#" style="font-size:0.75rem; color:#94A3B8; font-weight:500; text-decoration:none;">Privacy</a>
+                <a href="#" style="font-size:0.75rem; color:#94A3B8; font-weight:500; text-decoration:none;">Terms</a>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('cancelModal').addEventListener('show.bs.modal', function (e) {
+            var formId = e.relatedTarget.dataset.formId;
+            document.getElementById('confirmCancelBtn').onclick = function () {
+                document.getElementById(formId).submit();
+            };
+        });
+    </script>
 </body>
 </html>

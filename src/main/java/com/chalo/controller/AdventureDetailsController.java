@@ -4,11 +4,13 @@ import com.chalo.model.Adventure;
 import com.chalo.model.AdventureStatus;
 import com.chalo.model.JoinRequest;
 import com.chalo.model.JoinRequestStatus;
+import com.chalo.model.NotificationType;
 import com.chalo.model.User;
 import com.chalo.repository.AdventureRepository;
 import com.chalo.repository.JoinRequestRepository;
 import com.chalo.repository.UserRepository;
 import com.chalo.security.CustomUserDetails;
+import com.chalo.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +38,7 @@ public class AdventureDetailsController {
     private final AdventureRepository   adventureRepository;
     private final JoinRequestRepository joinRequestRepository;
     private final UserRepository        userRepository;
+    private final NotificationService   notificationService;
 
     // ── Adventure Detail — public ─────────────────────────────────────────────
 
@@ -50,7 +53,12 @@ public class AdventureDetailsController {
         User    host    = adventure.getHost();
         boolean isOwner = (principal != null) && principal.getId().equals(host.getId());
 
-        if (adventure.getStatus() != AdventureStatus.PUBLISHED && !isOwner) {
+        // CANCELLED adventures stay visible so notification links (/adventures/{id})
+        // remain reachable by participants. Only DRAFT/COMPLETED are hidden from
+        // non-owners.
+        if (adventure.getStatus() != AdventureStatus.PUBLISHED
+                && adventure.getStatus() != AdventureStatus.CANCELLED
+                && !isOwner) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
@@ -82,6 +90,7 @@ public class AdventureDetailsController {
 
         boolean isPublished    = adventure.getStatus() == AdventureStatus.PUBLISHED;
         boolean isCompleted    = adventure.getStatus() == AdventureStatus.COMPLETED;
+        boolean isCancelled    = adventure.getStatus() == AdventureStatus.CANCELLED;
         boolean showJoinButton = isLoggedIn && !isOwner && !alreadyRequested
                                  && slotsLeft > 0 && isPublished;
 
@@ -114,6 +123,7 @@ public class AdventureDetailsController {
         model.addAttribute("isLoggedIn",        isLoggedIn);
         model.addAttribute("isPublished",       isPublished);
         model.addAttribute("isCompleted",       isCompleted);
+        model.addAttribute("isCancelled",       isCancelled);
         model.addAttribute("showJoinButton",    showJoinButton);
         model.addAttribute("isFull",            slotsLeft == 0);
         model.addAttribute("relatedAdventures", related);
@@ -177,6 +187,14 @@ public class AdventureDetailsController {
 
         log.info("JoinRequest saved → id={} adventureId={} requesterId={} status={}",
                 jr.getId(), id, principal.getId(), jr.getStatus());
+
+        notificationService.notifyUser(
+                adventure.getHost().getId(),
+                "New Join Request",
+                principal.getName() + " wants to join your adventure.",
+                NotificationType.REQUEST_RECEIVED,
+                "/adventures/" + id + "/requests"
+        );
 
         redirectAttrs.addFlashAttribute("joinSuccess", true);
         return "redirect:/adventures/" + id;

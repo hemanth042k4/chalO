@@ -40,6 +40,7 @@ public class MyAdventuresController {
         log.debug("myAdventures → hostId={} adventureIds={}", principal.getId(), adventureIds);
 
         Map<Long, Long> pendingCounts = Collections.emptyMap();
+        Map<Long, Long> hostedAcceptedCounts = Collections.emptyMap();
         if (!adventureIds.isEmpty()) {
             List<Object[]> rows = joinRequestRepository.countPendingByAdventureIds(adventureIds);
             log.debug("myAdventures → countPendingByAdventureIds raw rows={}", rows.size());
@@ -48,6 +49,13 @@ public class MyAdventuresController {
             }
 
             pendingCounts = rows.stream()
+                    .collect(Collectors.toMap(
+                            row -> (Long) row[0],
+                            row -> (Long) row[1]
+                    ));
+
+            List<Object[]> acceptedRows = joinRequestRepository.countAcceptedByAdventureIds(adventureIds);
+            hostedAcceptedCounts = acceptedRows.stream()
                     .collect(Collectors.toMap(
                             row -> (Long) row[0],
                             row -> (Long) row[1]
@@ -84,8 +92,9 @@ public class MyAdventuresController {
             ));
         }
 
-        model.addAttribute("hostedAdventures",    hosted);
-        model.addAttribute("pendingCounts",        pendingCounts);
+        model.addAttribute("hostedAdventures",      hosted);
+        model.addAttribute("pendingCounts",          pendingCounts);
+        model.addAttribute("hostedAcceptedCounts",   hostedAcceptedCounts);
         model.addAttribute("joinedRequests",       joinedRequests);
         model.addAttribute("joinedAcceptedCounts", joinedAcceptedCounts);
         model.addAttribute("pendingRequests",      pendingRequests);

@@ -1,6 +1,7 @@
 package com.chalo.controller;
 
 import com.chalo.model.Adventure;
+import com.chalo.model.AdventureStatus;
 import com.chalo.model.Chat;
 import com.chalo.model.JoinRequestStatus;
 import com.chalo.model.Message;
@@ -50,6 +51,11 @@ public class CrewChatController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
+        AdventureStatus status = adventure.getStatus();
+        if (status != AdventureStatus.PUBLISHED && status != AdventureStatus.COMPLETED) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
         Chat          chat             = crewChatService.getOrCreateChat(adventure.getId());
         List<Message> messages         = messageRepository.findByChatIdWithSender(chat.getId());
         long          acceptedCount    = joinRequestRepository.countByAdventureAndStatus(
@@ -83,6 +89,11 @@ public class CrewChatController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         if (!crewChatService.canAccess(adventure, principal.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        AdventureStatus status = adventure.getStatus();
+        if (status != AdventureStatus.PUBLISHED && status != AdventureStatus.COMPLETED) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 

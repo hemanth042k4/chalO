@@ -1,10 +1,13 @@
 package com.chalo.controller;
 
 import com.chalo.model.Adventure;
+import com.chalo.model.AdventureStatus;
 import com.chalo.model.JoinRequest;
 import com.chalo.model.JoinRequestStatus;
+import com.chalo.model.NotificationType;
 import com.chalo.repository.JoinRequestRepository;
 import com.chalo.security.CustomUserDetails;
+import com.chalo.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class JoinRequestController {
 
     private final JoinRequestRepository joinRequestRepository;
+    private final NotificationService   notificationService;
 
     // ── Accept ────────────────────────────────────────────────────────────────
     // Only the adventure's host may accept. The JOIN FETCH query avoids lazy-load
@@ -41,6 +45,17 @@ public class JoinRequestController {
         }
 
         Adventure adv = request.getAdventure();
+
+        if (adv.getStatus() == AdventureStatus.CANCELLED) {
+            redirectAttrs.addFlashAttribute("actionError", "Cannot accept — this adventure has been cancelled.");
+            return "redirect:/adventures/" + adv.getId() + "/requests";
+        }
+
+        if (request.getStatus() == JoinRequestStatus.ACCEPTED) {
+            redirectAttrs.addFlashAttribute("actionSuccess", "Request already accepted.");
+            return "redirect:/adventures/" + adv.getId() + "/requests";
+        }
+
         long accepted = joinRequestRepository.countByAdventureAndStatus(adv, JoinRequestStatus.ACCEPTED);
         if (accepted >= adv.getMaxParticipants()) {
             log.warn("accept: adventure {} already full ({}/{})", adv.getId(), accepted, adv.getMaxParticipants());
@@ -53,6 +68,14 @@ public class JoinRequestController {
         request.setStatus(JoinRequestStatus.ACCEPTED);
         log.info("accept: request {} accepted for adventure {} ({}/{})",
                 id, adv.getId(), accepted + 1, adv.getMaxParticipants());
+
+        notificationService.notifyUser(
+                request.getRequester().getId(),
+                "Request Accepted",
+                "Your request to join \"" + adv.getTitle() + "\" has been accepted.",
+                NotificationType.REQUEST_ACCEPTED,
+                "/adventures/" + adv.getId()
+        );
 
         redirectAttrs.addFlashAttribute("actionSuccess", "Request accepted.");
         return "redirect:/adventures/" + adv.getId() + "/requests";
@@ -73,9 +96,29 @@ public class JoinRequestController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
+        Adventure rejAdv = request.getAdventure();
+
+        if (rejAdv.getStatus() == AdventureStatus.CANCELLED) {
+            redirectAttrs.addFlashAttribute("actionError", "Cannot reject — this adventure has been cancelled.");
+            return "redirect:/adventures/" + rejAdv.getId() + "/requests";
+        }
+
+        if (request.getStatus() == JoinRequestStatus.ACCEPTED) {
+            redirectAttrs.addFlashAttribute("actionError", "Cannot reject an already-accepted participant.");
+            return "redirect:/adventures/" + rejAdv.getId() + "/requests";
+        }
+
         request.setStatus(JoinRequestStatus.REJECTED);
 
+        notificationService.notifyUser(
+                request.getRequester().getId(),
+                "Request Rejected",
+                "Your request to join \"" + rejAdv.getTitle() + "\" was not accepted.",
+                NotificationType.REQUEST_REJECTED,
+                "/adventures/" + rejAdv.getId()
+        );
+
         redirectAttrs.addFlashAttribute("actionSuccess", "Request rejected.");
-        return "redirect:/adventures/" + request.getAdventure().getId() + "/requests";
+        return "redirect:/adventures/" + rejAdv.getId() + "/requests";
     }
 }

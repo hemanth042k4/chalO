@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Crews — ChalO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --ink:         #0F172A;
+            --bg:          #F8FAFC;
+            --surface:     #FFFFFF;
+            --border:      #E2E8F0;
+            --muted:       #64748B;
+            --subtle:      #94A3B8;
+            --brand:       #1E293B;
+            --accent:      #F59E0B;
+            --accent-dark: #D97706;
+            --accent-faint:#FFFBEB;
+            --brand-soft:  var(--accent-faint);
+            --brand-dark:  var(--accent-dark);
+            --brand-glow:  rgba(0,0,0,0);
+            --line:        var(--border);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        a { text-decoration: none; }
+
+        /* ── Header ───────────────────────────────────────────────────── */
+        .app-header {
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header .inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand { display: inline-flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
+
+        .brand .logo-mark {
+            width: 32px; height: 32px;
+            background: var(--brand);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem;
+        }
+
+        .brand .logo-name { font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; }
+
+        .header-spacer { flex: 1; }
+        .header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+        .btn-brand {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            height: 36px; padding: 0 1rem;
+            border: none; border-radius: 8px;
+            background: var(--accent); color: var(--ink);
+            font-size: 0.875rem; font-weight: 600;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .btn-brand:hover { background: var(--accent-dark); color: var(--ink); transform: translateY(-1px); }
+
+        .profile-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            height: 36px; padding: 0 0.35rem 0 0.85rem;
+            border: 1px solid var(--line); border-radius: 8px;
+            background: #fff; color: var(--ink); font-weight: 600; font-size: 0.875rem;
+        }
+
+        .profile-btn:hover { border-color: #CBD5E1; color: var(--ink); }
+
+        .avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--accent-faint); color: var(--brand);
+            border: 1.5px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
+        }
+
+        .dropdown-menu {
+            border: 1px solid var(--line); border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            padding: 0.375rem; min-width: 220px;
+        }
+
+        .dropdown-item {
+            border-radius: 8px; padding: 0.55rem 0.75rem;
+            font-size: 0.875rem; font-weight: 500;
+            display: flex; align-items: center; gap: 0.6rem;
+            color: var(--ink);
+        }
+
+        .dropdown-item i { color: var(--subtle); width: 16px; }
+        .dropdown-item.active { background: var(--accent-faint); color: var(--ink); font-weight: 600; }
+        .dropdown-item.active i { color: var(--accent-dark); }
+        .dropdown-item:hover { background: var(--bg); color: var(--ink); }
+
+        .btn-notif {
+            position: relative;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border: 1px solid var(--line); border-radius: 8px;
+            background: #fff; color: var(--ink);
+            transition: border-color 0.15s;
+            flex-shrink: 0;
+        }
+        .btn-notif:hover { border-color: #CBD5E1; color: var(--ink); }
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            min-width: 16px; height: 16px; padding: 0 3px;
+            border-radius: 100px; background: var(--accent); color: var(--ink);
+            font-size: 0.62rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1; border: 2px solid #fff;
+        }
+
+        /* ── Page container ───────────────────────────────────────────── */
+        .container-app { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+        /* ── Page head ────────────────────────────────────────────────── */
+        .page-head { margin-bottom: 2rem; }
+        .page-eyebrow {
+            font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--accent-dark); margin-bottom: 0.4rem;
+        }
+        .page-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.35rem; }
+        .page-sub { color: var(--muted); font-size: 0.95rem; }
+
+        /* ── Section ──────────────────────────────────────────────────── */
+        .section { margin-bottom: 2.75rem; }
+        .section-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem; }
+        .section-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; }
+        .section-count {
+            font-size: 0.78rem; font-weight: 700; color: var(--accent-dark);
+            background: var(--accent-faint); border-radius: 100px; padding: 0.15rem 0.6rem;
+        }
+
+        /* ── Card grid ────────────────────────────────────────────────── */
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+
+        /* ── Crew card ────────────────────────────────────────────────── */
+        .crew-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s, transform 0.15s;
+        }
+
+        .crew-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+            transform: translateY(-2px);
+        }
+
+        /* Cover */
+        .crew-cover {
+            position: relative;
+            aspect-ratio: 3 / 2;
+            background: #EEE;
+            overflow: hidden;
+        }
+
+        .crew-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        /* Cover placeholder — identical design to my-adventures.html */
+        .crew-cover-placeholder {
+            width: 100%; height: 100%;
+            background: linear-gradient(145deg, #0D1B2A 0%, #162032 40%, #1D3545 70%, #12263A 100%);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 0.5rem;
+            position: relative; overflow: hidden;
+        }
+
+        .crew-cover-placeholder::before {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 44%;
+            background: rgba(245,158,11,0.08);
+            clip-path: polygon(0% 100%, 12% 60%, 25% 78%, 40% 38%, 55% 62%, 70% 28%, 85% 52%, 100% 35%, 100% 100%);
+        }
+
+        .crew-cover-placeholder::after {
+            content: '';
+            position: absolute; top: -40px; right: -40px;
+            width: 130px; height: 130px;
+            background: radial-gradient(circle, rgba(245,158,11,0.18) 0%, transparent 65%);
+            border-radius: 50%;
+        }
+
+        .placeholder-icon {
+            position: relative; z-index: 1;
+            color: rgba(245,158,11,0.65); font-size: 2.2rem;
+        }
+
+        .placeholder-label {
+            position: relative; z-index: 1;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.68rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+
+        /* Role badge — top right */
+        .role-badge {
+            position: absolute; top: 0.7rem; right: 0.7rem;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px;
+            padding: 0.28rem 0.65rem; border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+
+        .role-badge i { font-size: 0.72rem; }
+
+        .role-host   { background: var(--brand); color: #fff; }
+        .role-member { background: #DCFCE7; color: #15803D; }
+
+        /* Adventure status pill — top left (hosted cards only) */
+        .status-pill {
+            position: absolute; top: 0.7rem; left: 0.7rem;
+            font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+            padding: 0.25rem 0.55rem; border-radius: 100px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+        }
+
+        .status-published { color: #15803D; background: #DCFCE7; }
+        .status-draft     { color: #475569; background: #E2E8F0; }
+        .status-completed { color: #1D4ED8; background: #DBEAFE; }
+
+        /* Card body */
+        .crew-body {
+            padding: 1rem 1.05rem 1.1rem;
+            display: flex; flex-direction: column; flex: 1;
+        }
+
+        .crew-title {
+            font-size: 1rem; font-weight: 700; line-height: 1.3;
+            color: var(--ink); margin-bottom: 0.55rem;
+        }
+
+        .crew-meta {
+            display: flex; align-items: center; gap: 0.35rem;
+            font-size: 0.82rem; color: var(--muted);
+            margin-bottom: 0.28rem;
+        }
+
+        .crew-meta i { color: var(--subtle); font-size: 0.85rem; width: 14px; flex-shrink: 0; }
+
+        /* Member count strip */
+        .crew-members {
+            display: flex; align-items: center; gap: 0.45rem;
+            font-size: 0.82rem; color: var(--muted);
+            background: var(--bg); border-radius: 8px;
+            padding: 0.4rem 0.65rem;
+            margin: 0.65rem 0 1rem;
+        }
+
+        .crew-members i { color: var(--brand); font-size: 0.88rem; }
+        .crew-members strong { color: var(--ink); }
+
+        /* Open Chat button */
+        .btn-open-chat {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            width: 100%; height: 44px; border: none; border-radius: 11px;
+            background: var(--brand); color: #fff;
+            font-size: 0.88rem; font-weight: 700; font-family: inherit;
+            box-shadow: 0 4px 14px var(--brand-glow);
+            cursor: pointer; transition: background 0.18s, transform 0.1s;
+            margin-top: auto;
+        }
+
+        .btn-open-chat:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+
+        /* ── Empty state ──────────────────────────────────────────────── */
+        .empty-state {
+            background: #fff; border: 1px solid var(--line); border-radius: 12px;
+            padding: 4.5rem 2rem; text-align: center;
+        }
+
+        .empty-icon {
+            width: 56px; height: 56px; margin: 0 auto 1.4rem;
+            border-radius: 12px; background: var(--accent-faint); color: var(--accent-dark);
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+        }
+
+        .empty-title {
+            font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.6rem;
+        }
+
+        .empty-sub {
+            color: var(--muted); font-size: 0.97rem; max-width: 400px;
+            margin: 0 auto 2rem; line-height: 1.65;
+        }
+
+        .empty-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+
+        .btn-primary-action {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            height: 48px; padding: 0 1.6rem; border-radius: 12px;
+            background: var(--brand); color: #fff;
+            font-weight: 700; font-size: 0.95rem;
+            box-shadow: 0 4px 16px var(--brand-glow);
+            transition: background 0.18s, transform 0.1s;
+        }
+
+        .btn-primary-action:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+
+        .btn-secondary-action {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            height: 48px; padding: 0 1.6rem; border-radius: 12px;
+            border: 1.5px solid var(--brand); background: #fff; color: var(--brand);
+            font-weight: 700; font-size: 0.95rem;
+            transition: all 0.15s;
+        }
+
+        .btn-secondary-action:hover { background: var(--brand); color: #fff; }
+
+        /* ── Responsive ───────────────────────────────────────────────── */
+        @media (max-width: 900px) {
+            .card-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .card-grid { grid-template-columns: 1fr; }
+            .header-actions .label-hide { display: none; }
+            .btn-brand { padding: 0 0.9rem; }
+            .page-title { font-size: 1.65rem; }
+            .empty-state { padding: 3rem 1.5rem; }
+            .empty-actions { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Header ─────────────────────────────────────────────────────────── -->
+    <header class="app-header">
+        <div class="inner">
+
+            <a th:href="@{/dashboard}" class="brand">
+                <span class="logo-mark">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11.5" cy="4.5" r="2.5" fill="white"/>
+                        <line x1="4.5" y1="12.5" x2="11.5" y2="4.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                        <circle cx="4.5" cy="12.5" r="1.5" fill="rgba(255,255,255,0.55)"/>
+                    </svg>
+                </span>
+                <span class="logo-name">ChalO</span>
+            </a>
+
+            <div class="header-spacer"></div>
+
+            <div class="header-actions">
+
+                <a th:href="@{/adventures/new}" class="btn-brand">
+                    <i class="bi bi-plus-lg"></i>
+                    <span class="label-hide">Host Adventure</span>
+                </a>
+
+                <a th:href="@{/notifications}" class="btn-notif" title="Notifications">
+                    <i class="bi bi-bell-fill" style="font-size:0.95rem;"></i>
+                    <span class="notif-badge"
+                          th:if="${unreadNotificationCount > 0}"
+                          th:text="${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}">3</span>
+                </a>
+
+                <div class="dropdown">
+                    <button class="profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar" th:text="${#strings.substring(userName, 0, 1).toUpperCase()}">A</span>
+                        <i class="bi bi-chevron-down" style="font-size:0.7rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <span class="dropdown-item-text px-2 py-1">
+                                <small class="text-muted">Signed in as</small><br>
+                                <strong th:text="${userName}">Explorer</strong>
+                            </span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="bi bi-grid"></i> Dashboard</a></li>
+                        <li><a class="dropdown-item" th:href="@{/my-adventures}"><i class="bi bi-backpack2"></i> My Adventures</a></li>
+                        <li><a class="dropdown-item active" th:href="@{/my-crews}"><i class="bi bi-people-fill"></i> My Crews</a></li>
+                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right text-danger"></i> Log out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- ── Page body ──────────────────────────────────────────────────────── -->
+    <div class="container-app">
+
+        <!-- Page head -->
+        <div class="page-head">
+            <p class="page-eyebrow">Crew Hub</p>
+            <h1 class="page-title">My Crews</h1>
+            <p class="page-sub">Every adventure you're running or riding along on.</p>
+        </div>
+
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <!--  Section 1 — Crews you host                                      -->
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <section class="section" th:if="${!hostedCrews.empty}">
+
+            <div class="section-head">
+                <h2 class="section-title">Crews you host</h2>
+                <span class="section-count" th:text="${hostedCrews.size()}">0</span>
+            </div>
+
+            <div class="card-grid">
+                <article class="crew-card" th:each="adv : ${hostedCrews}">
+
+                    <!-- Cover image or branded placeholder -->
+                    <div class="crew-cover">
+                        <img th:if="${adv.coverImageUrl}"
+                             th:src="${adv.coverImageUrl}"
+                             th:alt="${adv.title}"
+                             loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="crew-cover-placeholder"
+                             th:style="${adv.coverImageUrl} ? 'display:none' : ''">
+                            <i class="bi bi-compass-fill placeholder-icon"></i>
+                            <span class="placeholder-label">ChalO</span>
+                        </div>
+
+                        <!-- Adventure status — top left -->
+                        <span class="status-pill"
+                              th:classappend="${' status-' + adv.status.name().toLowerCase()}"
+                              th:text="${#strings.capitalize(adv.status.name().toLowerCase())}">
+                            Published
+                        </span>
+
+                        <!-- Role badge — top right -->
+                        <span class="role-badge role-host">
+                            <i class="bi bi-shield-fill"></i> Host
+                        </span>
+                    </div>
+
+                    <!-- Card body -->
+                    <div class="crew-body">
+
+                        <h3 class="crew-title" th:text="${adv.title}">Adventure Title</h3>
+
+                        <div class="crew-meta">
+                            <i class="bi bi-calendar-event-fill"></i>
+                            <span th:text="${#temporals.format(adv.adventureDate, 'EEE, dd MMM yyyy')}">Sat, 14 Jun 2026</span>
+                        </div>
+                        <div class="crew-meta">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span th:text="${adv.locationName} ?: 'Location TBD'">Location</span>
+                        </div>
+
+                        <!-- Member count -->
+                        <div class="crew-members" th:with="count=${memberCounts[adv.id] ?: 0}">
+                            <i class="bi bi-people-fill"></i>
+                            <span>
+                                <strong th:text="${count}">0</strong> members
+                                &nbsp;&middot;&nbsp; up to <strong th:text="${adv.maxParticipants}">8</strong>
+                            </span>
+                        </div>
+
+                        <!-- Open Chat CTA -->
+                        <a class="btn-open-chat"
+                           th:href="@{/adventures/{id}/chat(id=${adv.id})}">
+                            <i class="bi bi-chat-dots-fill"></i> Open Chat
+                        </a>
+
+                    </div>
+                </article>
+            </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <!--  Section 2 — Crews you've joined                                 -->
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <section class="section" th:if="${!memberCrews.empty}">
+
+            <div class="section-head">
+                <h2 class="section-title">Crews you've joined</h2>
+                <span class="section-count" th:text="${memberCrews.size()}">0</span>
+            </div>
+
+            <div class="card-grid">
+                <article class="crew-card" th:each="jr : ${memberCrews}">
+
+                    <!-- Cover image or branded placeholder -->
+                    <div class="crew-cover">
+                        <img th:if="${jr.adventure.coverImageUrl}"
+                             th:src="${jr.adventure.coverImageUrl}"
+                             th:alt="${jr.adventure.title}"
+                             loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="crew-cover-placeholder"
+                             th:style="${jr.adventure.coverImageUrl} ? 'display:none' : ''">
+                            <i class="bi bi-compass-fill placeholder-icon"></i>
+                            <span class="placeholder-label">ChalO</span>
+                        </div>
+
+                        <!-- Role badge — top right -->
+                        <span class="role-badge role-member">
+                            <i class="bi bi-person-check-fill"></i> Member
+                        </span>
+                    </div>
+
+                    <!-- Card body -->
+                    <div class="crew-body">
+
+                        <h3 class="crew-title" th:text="${jr.adventure.title}">Adventure Title</h3>
+
+                        <div class="crew-meta">
+                            <i class="bi bi-calendar-event-fill"></i>
+                            <span th:text="${#temporals.format(jr.adventure.adventureDate, 'EEE, dd MMM yyyy')}">Sat, 14 Jun 2026</span>
+                        </div>
+                        <div class="crew-meta">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span th:text="${jr.adventure.locationName} ?: 'Location TBD'">Location</span>
+                        </div>
+                        <div class="crew-meta">
+                            <i class="bi bi-person-circle"></i>
+                            <span>Hosted by <strong th:text="${jr.adventure.host.name}">Host</strong></span>
+                        </div>
+
+                        <!-- Member count -->
+                        <div class="crew-members" th:with="count=${memberCounts[jr.adventure.id] ?: 0}">
+                            <i class="bi bi-people-fill"></i>
+                            <span><strong th:text="${count}">0</strong> members</span>
+                        </div>
+
+                        <!-- Open Chat CTA -->
+                        <a class="btn-open-chat"
+                           th:href="@{/adventures/{id}/chat(id=${jr.adventure.id})}">
+                            <i class="bi bi-chat-dots-fill"></i> Open Chat
+                        </a>
+
+                    </div>
+                </article>
+            </div>
+
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <!--  Empty state — no crews at all                                    -->
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <div class="empty-state" th:if="${totalCrews == 0}">
+            <div class="empty-icon"><i class="bi bi-people"></i></div>
+            <h2 class="empty-title">No crews yet</h2>
+            <p class="empty-sub">
+                Join or host an adventure to start building your crew.
+            </p>
+            <div class="empty-actions">
+                <a th:href="@{/explore}" class="btn-primary-action">
+                    <i class="bi bi-search"></i> Explore Adventures
+                </a>
+                <a th:href="@{/adventures/new}" class="btn-secondary-action">
+                    <i class="bi bi-plus-lg"></i> Host Adventure
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

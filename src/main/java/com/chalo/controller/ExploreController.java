@@ -3,6 +3,7 @@ package com.chalo.controller;
 import com.chalo.model.Adventure;
 import com.chalo.model.Tag;
 import com.chalo.repository.AdventureRepository;
+import com.chalo.repository.JoinRequestRepository;
 import com.chalo.repository.TagRepository;
 import com.chalo.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +13,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class ExploreController {
 
-    private final AdventureRepository adventureRepository;
-    private final TagRepository       tagRepository;
+    private final AdventureRepository   adventureRepository;
+    private final TagRepository         tagRepository;
+    private final JoinRequestRepository joinRequestRepository;
 
     // ── Explore Adventures — GET /explore ─────────────────────────────────────
     // Permitted for all users (including anonymous) per SecurityConfig.
@@ -56,7 +61,24 @@ public class ExploreController {
             results      = adventureRepository.findUpcomingPublished(loc, excludeHostId);
         }
 
+        // Batch accepted counts — one query for all result IDs, no N+1.
+        // Converts to Map<Long, Integer> (slotsLeft per adventure) for clean template comparisons.
+        List<Long> resultIds = results.stream().map(Adventure::getId).toList();
+        Map<Long, Integer> slotsLeftMap = Collections.emptyMap();
+        if (!resultIds.isEmpty()) {
+            Map<Long, Long> acceptedCounts = new HashMap<>();
+            joinRequestRepository.countAcceptedByAdventureIds(resultIds)
+                    .forEach(row -> acceptedCounts.put((Long) row[0], (Long) row[1]));
+            slotsLeftMap = new HashMap<>();
+            for (Adventure adv : results) {
+                long accepted = acceptedCounts.getOrDefault(adv.getId(), 0L);
+                slotsLeftMap.put(adv.getId(),
+                        (int) Math.max(0, adv.getMaxParticipants() - accepted));
+            }
+        }
+
         model.addAttribute("adventures",     results);
+        model.addAttribute("slotsLeftMap",   slotsLeftMap);
         model.addAttribute("selectedTags",   selectedTags);   // resolved Tag objects
         model.addAttribute("searchTags",     hasTags ? tags : List.of()); // slugs for chip pre-check
         model.addAttribute("searchLocation", hasLocation ? location.trim() : "");

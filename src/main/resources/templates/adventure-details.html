@@ -11,14 +11,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         :root {
-            --brand:      #FF6B2B;
-            --brand-dark: #E55A1A;
-            --brand-soft: #FFF1EA;
-            --brand-glow: rgba(255, 107, 43, 0.25);
-            --ink:        #111827;
-            --muted:      #6B7280;
-            --line:       #ECECEC;
-            --bg:         #FAFAFA;
+            --ink:         #0F172A;
+            --bg:          #F8FAFC;
+            --surface:     #FFFFFF;
+            --border:      #E2E8F0;
+            --muted:       #64748B;
+            --subtle:      #94A3B8;
+            --brand:       #1E293B;
+            --accent:      #F59E0B;
+            --accent-dark: #D97706;
+            --accent-faint:#FFFBEB;
+            --brand-soft:  var(--accent-faint);
+            --brand-dark:  var(--accent-dark);
+            --brand-glow:  rgba(0,0,0,0);
+            --line:        var(--border);
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -41,17 +47,18 @@
         }
 
         .app-header .inner {
-            max-width: 1180px; margin: 0 auto;
-            padding: 0.75rem 1.25rem;
+            max-width: 1200px; margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 60px;
             display: flex; align-items: center; gap: 1rem;
         }
 
         .brand { display: inline-flex; align-items: center; gap: 0.55rem; flex-shrink: 0; }
 
         .brand .logo-mark {
-            width: 36px; height: 36px; background: var(--brand); border-radius: 10px;
+            width: 32px; height: 32px; background: var(--brand); border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 1rem; box-shadow: 0 4px 12px var(--brand-glow);
+            color: #fff; font-size: 1rem;
         }
 
         .brand .logo-name { font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; }
@@ -61,53 +68,77 @@
 
         .btn-ghost {
             display: inline-flex; align-items: center; gap: 0.4rem;
-            height: 42px; padding: 0 0.95rem;
-            border: 1px solid var(--line); border-radius: 100px;
+            height: 36px; padding: 0 0.95rem;
+            border: 1px solid var(--line); border-radius: 8px;
             background: #fff; color: var(--ink); font-size: 0.875rem; font-weight: 600;
-            transition: box-shadow 0.18s, border-color 0.18s;
+            transition: border-color 0.15s;
         }
 
-        .btn-ghost:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); border-color: #DADADA; color: var(--ink); }
+        .btn-ghost:hover { border-color: #CBD5E1; color: var(--ink); }
 
         .btn-brand {
-            display: inline-flex; align-items: center; gap: 0.45rem;
-            height: 42px; padding: 0 1.1rem; border: none; border-radius: 100px;
-            background: #FF6B2B; background: var(--brand);
-            color: #fff; font-size: 0.875rem; font-weight: 600;
-            box-shadow: 0 4px 14px var(--brand-glow); transition: background 0.18s, transform 0.1s;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            height: 36px; padding: 0 1rem; border: none; border-radius: 8px;
+            background: var(--accent);
+            color: var(--ink); font-size: 0.875rem; font-weight: 600;
+            transition: background 0.15s, transform 0.1s;
         }
 
-        .btn-brand:hover { background: var(--brand-dark); color: #fff; transform: translateY(-1px); }
+        .btn-brand:hover { background: var(--accent-dark); color: var(--ink); transform: translateY(-1px); }
 
         .profile-btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            height: 42px; padding: 0 0.35rem 0 0.85rem;
-            border: 1px solid var(--line); border-radius: 100px;
+            height: 36px; padding: 0 0.35rem 0 0.85rem;
+            border: 1px solid var(--line); border-radius: 8px;
             background: #fff; color: var(--ink); font-weight: 600; font-size: 0.875rem;
         }
 
-        .profile-btn:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); color: var(--ink); }
+        .profile-btn:hover { border-color: #CBD5E1; color: var(--ink); }
 
         .avatar-sm {
-            width: 30px; height: 30px; border-radius: 50%;
-            background: var(--brand-soft); color: var(--brand);
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--accent-faint); color: var(--brand);
+            border: 1.5px solid var(--border);
             display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
         }
 
         .dropdown-menu {
-            border: 1px solid var(--line); border-radius: 14px;
-            box-shadow: 0 12px 34px rgba(0,0,0,0.12);
-            padding: 0.4rem; min-width: 210px;
+            border: 1px solid var(--line); border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            padding: 0.375rem; min-width: 220px;
         }
 
         .dropdown-item {
-            border-radius: 9px; padding: 0.6rem 0.7rem;
-            font-size: 0.9rem; font-weight: 500;
+            border-radius: 8px; padding: 0.55rem 0.75rem;
+            font-size: 0.875rem; font-weight: 500;
             display: flex; align-items: center; gap: 0.6rem;
+            color: var(--ink);
         }
 
-        .dropdown-item i { color: var(--muted); width: 18px; }
+        .dropdown-item i { color: var(--subtle); width: 16px; }
+        .dropdown-item.active { background: var(--accent-faint); color: var(--ink); font-weight: 600; }
+        .dropdown-item.active i { color: var(--accent-dark); }
+        .dropdown-item:hover { background: var(--bg); color: var(--ink); }
+
+        .btn-notif {
+            position: relative;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border: 1px solid var(--line); border-radius: 8px;
+            background: #fff; color: var(--ink);
+            transition: border-color 0.15s;
+            flex-shrink: 0;
+        }
+        .btn-notif:hover { border-color: #CBD5E1; color: var(--ink); }
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px;
+            min-width: 16px; height: 16px; padding: 0 3px;
+            border-radius: 100px; background: var(--accent); color: var(--ink);
+            font-size: 0.62rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1; border: 2px solid #fff;
+        }
 
         /* ── Hero ──────────────────────────────────────────────────────────── */
         .detail-hero {
@@ -162,9 +193,9 @@
         /* Owner preview banner */
         .owner-banner {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            background: rgba(255,107,43,0.25);
-            border: 1px solid rgba(255,107,43,0.5);
-            color: #FFB899;
+            background: rgba(245,158,11,0.15);
+            border: 1px solid rgba(245,158,11,0.4);
+            color: #FDE68A;
             font-size: 0.78rem; font-weight: 700;
             padding: 0.3rem 0.75rem; border-radius: 100px;
             margin-bottom: 0.75rem;
@@ -204,13 +235,13 @@
             color: rgba(255,255,255,0.85);
         }
 
-        .hero-meta-item i { color: var(--brand); font-size: 0.9rem; }
+        .hero-meta-item i { color: var(--accent); font-size: 0.9rem; }
 
         /* ── Page body ─────────────────────────────────────────────────────── */
         .container-app {
-            max-width: 1180px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 2.25rem 1.25rem 1rem;
+            padding: 2rem 1.5rem 4rem;
         }
 
         /* ── Main column ───────────────────────────────────────────────────── */
@@ -275,7 +306,7 @@
             font-size: 0.84rem; font-weight: 600;
             color: var(--brand); background: var(--brand-soft);
             padding: 0.4rem 0.9rem; border-radius: 100px;
-            border: 1px solid rgba(255,107,43,0.2);
+            border: 1px solid var(--border);
         }
 
         .tag-chip .tag-icon { font-size: 0.9rem; }
@@ -376,6 +407,33 @@
         .join-full i   { color: #92400E; }
         .join-ended    { background: #F1F5F9; }
         .join-ended i  { color: var(--muted); }
+        .join-cancelled    { background: #FEF2F2; border: 1px solid #FECACA; }
+        .join-cancelled i  { color: #DC2626; }
+        .join-cancelled strong { color: #7F1D1D; }
+        .join-cancelled p  { color: #991B1B; }
+
+        .btn-sm-danger {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            height: 34px; padding: 0 0.85rem; border-radius: 8px;
+            border: 1.5px solid #FECACA; background: #FEF2F2; color: #DC2626;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .btn-sm-danger:hover { background: #FEE2E2; border-color: #FCA5A5; }
+
+        .btn-modal-keep {
+            height: 44px; padding: 0 1.25rem; border-radius: 10px;
+            border: 1px solid var(--line); background: #fff; color: var(--ink);
+            font-weight: 600; font-size: 0.9rem; cursor: pointer;
+        }
+        .btn-modal-keep:hover { background: #F7F7F7; }
+        .btn-modal-cancel {
+            height: 44px; padding: 0 1.25rem; border-radius: 10px;
+            border: none; background: #DC2626; color: #fff;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-modal-cancel:hover { background: #B91C1C; }
 
         .join-owner-actions {
             display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;
@@ -423,7 +481,7 @@
         .btn-join {
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             width: 100%; height: 50px; border: none; border-radius: 13px;
-            background: #FF6B2B; background: var(--brand); color: #fff;
+            background: var(--brand); color: #fff;
             font-size: 0.97rem; font-weight: 700; font-family: inherit;
             box-shadow: 0 6px 18px var(--brand-glow);
             cursor: pointer; transition: background 0.18s, transform 0.1s;
@@ -435,7 +493,7 @@
         .join-login-btn {
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             width: 100%; height: 50px; border-radius: 13px;
-            background: #FF6B2B; background: var(--brand); color: #fff;
+            background: var(--brand); color: #fff;
             font-size: 0.97rem; font-weight: 700;
             box-shadow: 0 6px 18px var(--brand-glow);
             transition: background 0.18s; margin-bottom: 0.75rem;
@@ -530,12 +588,12 @@
         .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
 
         .adv-card {
-            background: #fff; border: 1px solid var(--line); border-radius: 18px;
+            background: #fff; border: 1px solid var(--border); border-radius: 10px;
             overflow: hidden; display: flex; flex-direction: column;
             transition: box-shadow 0.2s, transform 0.15s;
         }
 
-        .adv-card:hover { box-shadow: 0 14px 34px rgba(0,0,0,0.10); transform: translateY(-3px); }
+        .adv-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); }
 
         .adv-cover { position: relative; aspect-ratio: 3 / 2; background: #EEE; overflow: hidden; }
         .adv-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -559,7 +617,7 @@
         .adv-body { padding: 0.95rem 1rem 1.05rem; display: flex; flex-direction: column; flex: 1; }
         .adv-title { font-size: 0.97rem; font-weight: 700; color: var(--ink); line-height: 1.3; margin-bottom: 0.45rem; }
         .adv-meta { display: flex; align-items: center; gap: 0.35rem; font-size: 0.81rem; color: var(--muted); margin-bottom: 0.3rem; }
-        .adv-meta i { color: var(--brand); font-size: 0.82rem; width: 14px; }
+        .adv-meta i { color: var(--subtle); font-size: 0.82rem; width: 14px; }
         .adv-actions { margin-top: auto; padding-top: 0.7rem; }
 
         .btn-view {
@@ -605,7 +663,13 @@
     <header class="app-header">
         <div class="inner">
             <a th:href="@{/dashboard}" class="brand">
-                <span class="logo-mark"><i class="bi bi-compass-fill"></i></span>
+                <span class="logo-mark">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11.5" cy="4.5" r="2.5" fill="white"/>
+                        <line x1="4.5" y1="12.5" x2="11.5" y2="4.5" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                        <circle cx="4.5" cy="12.5" r="1.5" fill="rgba(255,255,255,0.55)"/>
+                    </svg>
+                </span>
                 <span class="logo-name">ChalO</span>
             </a>
 
@@ -620,6 +684,11 @@
                 <a th:href="@{/adventures/new}" class="btn-brand">
                     <i class="bi bi-plus-lg"></i>
                     <span class="label-hide">Host Adventure</span>
+                </a>
+                <a th:href="@{/notifications}" class="btn-notif" title="Notifications">
+                    <i class="bi bi-bell-fill" style="font-size:0.95rem;"></i>
+                    <span class="notif-badge" th:if="${unreadNotificationCount > 0}"
+                          th:text="${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}">3</span>
                 </a>
                 <div class="dropdown">
                     <button class="profile-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -636,6 +705,7 @@
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="bi bi-grid"></i> Dashboard</a></li>
                         <li><a class="dropdown-item" th:href="@{/my-adventures}"><i class="bi bi-backpack2"></i> My Adventures</a></li>
+                        <li><a class="dropdown-item" th:href="@{/my-crews}"><i class="bi bi-people"></i> My Crews</a></li>
                         <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person"></i> Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
@@ -709,6 +779,29 @@
 
     <!-- ── Main body ─────────────────────────────────────────────────────── -->
     <div class="container-app">
+
+        <!-- Cancelled banner -->
+        <div th:if="${isCancelled}"
+             style="background:#FEF2F2; border:1px solid #FECACA; border-radius:14px;
+                    padding:1rem 1.25rem; margin-bottom:1.5rem;
+                    display:flex; align-items:center; gap:0.75rem;">
+            <i class="bi bi-x-octagon-fill" style="color:#B91C1C; font-size:1.3rem; flex-shrink:0;"></i>
+            <div>
+                <strong style="font-size:0.93rem; color:#7F1D1D; display:block; margin-bottom:0.15rem;">Adventure Cancelled</strong>
+                <span style="font-size:0.82rem; color:#991B1B;">This adventure has been cancelled and is no longer accepting requests.</span>
+            </div>
+        </div>
+
+        <!-- Cancel success flash (redirected from cancel action) -->
+        <div th:if="${cancelSuccess}"
+             style="background:#DCFCE7; border:1px solid #BBF7D0; border-radius:12px;
+                    padding:1rem 1.25rem; margin-bottom:1.5rem;
+                    display:flex; align-items:center; gap:0.75rem;">
+            <i class="bi bi-check-circle-fill" style="color:#15803D; font-size:1.25rem; flex-shrink:0;"></i>
+            <div>
+                <strong style="font-size:0.93rem; color:#14532D; display:block; margin-bottom:0.15rem;" th:text="${cancelSuccess}">Cancelled.</strong>
+            </div>
+        </div>
 
         <!-- Join success flash -->
         <div th:if="${joinSuccess}"
@@ -795,15 +888,18 @@
                         <div class="info-item">
                             <div class="info-icon"><i class="bi bi-people-fill"></i></div>
                             <div>
-                                <p class="info-label">Group size</p>
-                                <p class="info-value" th:text="${'Up to ' + adventure.maxParticipants + ' adventurers'}">Up to 8 adventurers</p>
+                                <p class="info-label">Participants</p>
+                                <p class="info-value" th:text="${acceptedCount + ' / ' + adventure.maxParticipants}">5 / 8</p>
                             </div>
                         </div>
                         <div class="info-item">
                             <div class="info-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
                             <div>
-                                <p class="info-label">Spots remaining</p>
-                                <p class="info-value" th:text="${slotsLeft + ' of ' + adventure.maxParticipants}">5 of 8</p>
+                                <p class="info-label">Spots Left</p>
+                                <p class="info-value" th:unless="${isFull}"
+                                   th:text="${slotsLeft + (slotsLeft == 1 ? ' Spot' : ' Spots')}">3 Spots</p>
+                                <p class="info-value" th:if="${isFull}"
+                                   style="color:#DC2626; font-weight:800; letter-spacing:0.3px;">FULL</p>
                             </div>
                         </div>
                     </div>
@@ -818,20 +914,29 @@
                     <!-- ── Join card ─────────────────────────────────────── -->
                     <div class="sidebar-card">
 
-                        <!-- Slots indicator -->
-                        <div class="slot-count">
+                        <!-- Slots indicator — host sees accepted / max; visitors see spots left or FULL -->
+                        <div class="slot-count" th:if="${isOwner}">
                             <div class="slot-numbers">
+                                <span th:text="${acceptedCount}">5</span>
+                                <span style="font-size:1rem; font-weight:600; color:var(--muted);">/ <span th:text="${adventure.maxParticipants}">8</span></span>
+                            </div>
+                            <span class="slot-remaining">accepted</span>
+                        </div>
+                        <div class="slot-count" th:unless="${isOwner}">
+                            <div class="slot-numbers" th:unless="${isFull}">
                                 <span th:text="${slotsLeft}">5</span>
                                 <span style="font-size:1rem; font-weight:600; color:var(--muted);">/ <span th:text="${adventure.maxParticipants}">8</span></span>
                             </div>
-                            <span class="slot-remaining">spots remaining</span>
+                            <span th:if="${isFull}"
+                                  style="font-size:1.45rem; font-weight:800; color:#DC2626; letter-spacing:-0.5px; line-height:1;">FULL</span>
+                            <span class="slot-remaining" th:unless="${isFull}">spots remaining</span>
                         </div>
                         <div class="slot-bar-wrap">
                             <div class="slot-bar-fill" th:style="'width:' + ${fillPercent} + '%'"></div>
                         </div>
 
-                        <!-- Owner notice -->
-                        <div class="join-notice join-owner" th:if="${isOwner}">
+                        <!-- Owner notice — active adventure -->
+                        <div class="join-notice join-owner" th:if="${isOwner and !isCancelled}">
                             <i class="bi bi-shield-check-fill"></i>
                             <div>
                                 <strong>You're hosting this</strong>
@@ -846,12 +951,41 @@
                                     <a class="btn-sm-ghost" th:href="@{/my-adventures}">
                                         <i class="bi bi-backpack2"></i> My Adventures
                                     </a>
+                                    <button type="button" class="btn-sm-danger"
+                                            th:if="${isPublished}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#cancelAdventureModal">
+                                        <i class="bi bi-x-circle"></i> Cancel Adventure
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Owner notice — cancelled adventure -->
+                        <div class="join-notice join-cancelled" th:if="${isOwner and isCancelled}">
+                            <i class="bi bi-x-octagon-fill"></i>
+                            <div>
+                                <strong>Adventure Cancelled</strong>
+                                <p>You cancelled this adventure. All accepted participants were notified.</p>
+                                <div class="join-owner-actions" style="margin-top:0.6rem;">
+                                    <a class="btn-sm-ghost" th:href="@{/my-adventures}">
+                                        <i class="bi bi-backpack2"></i> My Adventures
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cancelled — shown first so it overrides request status notices -->
+                        <div class="join-notice join-cancelled" th:if="${!isOwner and isCancelled}">
+                            <i class="bi bi-x-octagon-fill"></i>
+                            <div>
+                                <strong>Adventure Cancelled</strong>
+                                <p>The host has cancelled this adventure.</p>
+                            </div>
+                        </div>
+
                         <!-- Request PENDING -->
-                        <div class="join-notice join-pending" th:if="${!isOwner and isPendingRequest}">
+                        <div class="join-notice join-pending" th:if="${!isOwner and isPendingRequest and !isCancelled}">
                             <i class="bi bi-hourglass-split"></i>
                             <div>
                                 <strong>Request Pending</strong>
@@ -860,7 +994,7 @@
                         </div>
 
                         <!-- Request ACCEPTED -->
-                        <div class="join-notice join-accepted" th:if="${!isOwner and isAcceptedRequest}">
+                        <div class="join-notice join-accepted" th:if="${!isOwner and isAcceptedRequest and !isCancelled}">
                             <i class="bi bi-check-circle-fill"></i>
                             <div>
                                 <strong>You're Part of This Adventure!</strong>
@@ -874,7 +1008,7 @@
                         </div>
 
                         <!-- Request REJECTED -->
-                        <div class="join-notice join-rejected" th:if="${!isOwner and isRejectedRequest}">
+                        <div class="join-notice join-rejected" th:if="${!isOwner and isRejectedRequest and !isCancelled}">
                             <i class="bi bi-x-circle-fill"></i>
                             <div>
                                 <strong>Request Not Accepted</strong>
@@ -882,13 +1016,22 @@
                             </div>
                         </div>
 
-                        <!-- Adventure full -->
-                        <div class="join-notice join-full" th:if="${!isOwner and !alreadyRequested and isFull and isPublished}">
+                        <!-- Adventure full notice -->
+                        <div class="join-notice join-full" th:if="${!isOwner and !alreadyRequested and isFull and isPublished and !isCancelled}">
                             <i class="bi bi-x-circle-fill"></i>
                             <div>
                                 <strong>Adventure is Full</strong>
                                 <p>All spots have been filled. Check back in case someone drops out.</p>
                             </div>
+                        </div>
+
+                        <!-- Adventure Full disabled button — replaces join button for logged-in users -->
+                        <div th:if="${isLoggedIn and !isOwner and !alreadyRequested and isFull and isPublished and !isCancelled}">
+                            <button type="button" class="btn-join"
+                                    style="background:#FEE2E2; color:#B91C1C; box-shadow:none; cursor:not-allowed; margin-top:0.5rem;"
+                                    disabled>
+                                <i class="bi bi-slash-circle"></i> Adventure Full
+                            </button>
                         </div>
 
                         <!-- Adventure completed/cancelled (visible to all, not owner) -->
@@ -900,7 +1043,7 @@
                             </div>
                         </div>
 
-                        <div class="join-notice join-ended" th:if="${!isOwner and !isCompleted and !isPublished and !alreadyRequested}">
+                        <div class="join-notice join-ended" th:if="${!isOwner and !isCompleted and !isPublished and !isCancelled and !alreadyRequested}">
                             <i class="bi bi-slash-circle"></i>
                             <div>
                                 <strong>Not Available</strong>
@@ -1050,6 +1193,56 @@
 
     </div>
 
+    <!-- ── Cancel Adventure: hidden form (th:action injects CSRF automatically) ── -->
+    <form id="cancelAdventureForm"
+          th:action="@{/adventures/{id}/cancel(id=${adventure.id})}"
+          method="post" class="d-none"
+          th:if="${isOwner and isPublished}">
+    </form>
+
+    <!-- ── Cancel Adventure Confirmation Modal ───────────────────────────────── -->
+    <div class="modal fade" id="cancelAdventureModal" tabindex="-1"
+         aria-labelledby="cancelAdventureModalLabel" aria-hidden="true"
+         th:if="${isOwner and isPublished}">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"
+                 style="border-radius:18px; border:none; overflow:hidden;
+                        box-shadow:0 24px 60px rgba(0,0,0,0.18);">
+
+                <div class="modal-header"
+                     style="border-bottom:1px solid var(--line); padding:1.35rem 1.5rem;">
+                    <h5 class="modal-title" id="cancelAdventureModalLabel"
+                        style="font-weight:800; font-size:1.05rem; letter-spacing:-0.3px;
+                               display:flex; align-items:center; gap:0.45rem;">
+                        <i class="bi bi-exclamation-triangle-fill" style="color:#DC2626;"></i>
+                        Cancel Adventure?
+                    </h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body" style="padding:1.35rem 1.5rem;">
+                    <p style="color:var(--muted); font-size:0.95rem; margin:0;">
+                        This will notify all accepted participants and remove the adventure
+                        from discovery. This action cannot be undone.
+                    </p>
+                </div>
+
+                <div class="modal-footer"
+                     style="border-top:1px solid var(--line); padding:1rem 1.5rem; gap:0.6rem;
+                            display:flex; justify-content:flex-end;">
+                    <button type="button" class="btn-modal-keep"
+                            data-bs-dismiss="modal">Keep Adventure</button>
+                    <button type="button" class="btn-modal-cancel"
+                            onclick="document.getElementById('cancelAdventureForm').submit()">
+                        Cancel Adventure
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- ── Request to Join Modal ─────────────────────────────────────────────── -->
     <div class="modal fade" id="joinModal" tabindex="-1"
          aria-labelledby="joinModalLabel" aria-hidden="true"
@@ -1105,6 +1298,15 @@
         </div>
     </div>
 
+    <footer style="border-top:1px solid #E2E8F0; padding:1.25rem 1.5rem; margin-top:2rem;">
+        <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-size:0.75rem; color:#94A3B8; font-weight:500;">© 2026 ChalO</span>
+            <div style="display:flex; gap:1.5rem;">
+                <a href="#" style="font-size:0.75rem; color:#94A3B8; font-weight:500; text-decoration:none;">Privacy</a>
+                <a href="#" style="font-size:0.75rem; color:#94A3B8; font-weight:500; text-decoration:none;">Terms</a>
+            </div>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

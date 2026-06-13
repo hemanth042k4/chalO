@@ -61,28 +61,37 @@ public class DashboardController {
     private List<Map<String, Object>> placeholderAdventures() {
         return List.of(
                 Map.of(
-                        "coverImageUrl", "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=600&q=70",
-                        "title",         "Sunrise Trek to Kumara Parvatha",
-                        "locationName",  "Kukke Subramanya, Karnataka",
-                        "hostName",      "Aarav Shetty",
-                        "date",          "Sat, 14 Jun 2026",
-                        "tags",          List.of("Trekking", "Sunrise")
+                        "coverImageUrl",  "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=600&q=70",
+                        "title",          "Sunrise Trek to Kumara Parvatha",
+                        "locationName",   "Kukke Subramanya, Karnataka",
+                        "hostName",       "Aarav Shetty",
+                        "date",           "Sat, 14 Jun 2026",
+                        "tags",           List.of("Trekking", "Sunrise"),
+                        "spotsLeft",      3,
+                        "maxParticipants", 8,
+                        "isFull",         false
                 ),
                 Map.of(
-                        "coverImageUrl", "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=70",
-                        "title",         "Overnight Camping at Kodachadri",
-                        "locationName",  "Kodachadri, Karnataka",
-                        "hostName",      "Meera Nair",
-                        "date",          "Fri, 20 Jun 2026",
-                        "tags",          List.of("Camping", "Photography")
+                        "coverImageUrl",  "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=70",
+                        "title",          "Overnight Camping at Kodachadri",
+                        "locationName",   "Kodachadri, Karnataka",
+                        "hostName",       "Meera Nair",
+                        "date",           "Fri, 20 Jun 2026",
+                        "tags",           List.of("Camping", "Photography"),
+                        "spotsLeft",      0,
+                        "maxParticipants", 6,
+                        "isFull",         true
                 ),
                 Map.of(
-                        "coverImageUrl", "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=70",
-                        "title",         "Beach Hopping in Gokarna",
-                        "locationName",  "Gokarna, Karnataka",
-                        "hostName",      "Rohan Kamath",
-                        "date",          "Sun, 28 Jun 2026",
-                        "tags",          List.of("Beach", "Road Trip")
+                        "coverImageUrl",  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=70",
+                        "title",          "Beach Hopping in Gokarna",
+                        "locationName",   "Gokarna, Karnataka",
+                        "hostName",       "Rohan Kamath",
+                        "date",           "Sun, 28 Jun 2026",
+                        "tags",           List.of("Beach", "Road Trip"),
+                        "spotsLeft",      2,
+                        "maxParticipants", 10,
+                        "isFull",         false
                 )
         );
     }

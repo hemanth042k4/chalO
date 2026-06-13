@@ -6,6 +6,7 @@ import com.chalo.model.AdventurePhoto;
 import com.chalo.model.AdventureStatus;
 import com.chalo.model.JoinRequest;
 import com.chalo.model.JoinRequestStatus;
+import com.chalo.model.NotificationType;
 import com.chalo.model.Tag;
 import com.chalo.model.User;
 import com.chalo.repository.AdventureRepository;
@@ -13,8 +14,10 @@ import com.chalo.repository.JoinRequestRepository;
 import com.chalo.repository.TagRepository;
 import com.chalo.repository.UserRepository;
 import com.chalo.security.CustomUserDetails;
+import com.chalo.service.NotificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -32,14 +35,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AdventureController {
 
-    private final TagRepository        tagRepository;
-    private final AdventureRepository  adventureRepository;
-    private final UserRepository       userRepository;
+    private final TagRepository         tagRepository;
+    private final AdventureRepository   adventureRepository;
+    private final UserRepository        userRepository;
     private final JoinRequestRepository joinRequestRepository;
+    private final NotificationService   notificationService;
 
     // ── Host Adventure — show form ─────────────────────────────────────────────
     // GET /adventures/new is restricted to ROLE_USER in SecurityConfig.
@@ -67,7 +72,8 @@ public class AdventureController {
     public String createAdventure(@Valid @ModelAttribute("form") AdventureForm form,
                                   BindingResult bindingResult,
                                   @AuthenticationPrincipal CustomUserDetails principal,
-                                  Model model) {
+                                  Model model,
+                                  RedirectAttributes redirectAttrs) {
 
         if (bindingResult.hasErrors()) {
             addReferenceData(model, principal);
@@ -112,6 +118,7 @@ public class AdventureController {
         }
 
         adventureRepository.save(adventure);
+        redirectAttrs.addFlashAttribute("createSuccess", "Your adventure is live and ready for explorers to join!");
         return "redirect:/my-adventures";
     }
 
@@ -196,6 +203,63 @@ public class AdventureController {
         model.addAttribute("userName",      principal.getName());
 
         return "adventures/requests";
+    }
+
+    // ── Cancel Adventure ──────────────────────────────────────────────────────
+    // Only the host can cancel. Only PUBLISHED adventures can be cancelled —
+    // CANCELLED is already terminal; DRAFT/COMPLETED are blocked.
+    // All ACCEPTED participants receive an ADVENTURE_CANCELLED notification.
+    // The adventure record and all join requests are preserved (soft cancel).
+
+    @PostMapping("/adventures/{id}/cancel")
+    @Transactional
+    public String cancelAdventure(@PathVariable Long id,
+                                   @AuthenticationPrincipal CustomUserDetails principal,
+                                   RedirectAttributes redirectAttrs) {
+
+        Adventure adventure = adventureRepository.findWithDetailById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (!adventure.getHost().getId().equals(principal.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if (adventure.getStatus() == AdventureStatus.CANCELLED) {
+            redirectAttrs.addFlashAttribute("cancelError", "This adventure is already cancelled.");
+            return "redirect:/adventures/" + id;
+        }
+
+        if (adventure.getStatus() != AdventureStatus.PUBLISHED) {
+            redirectAttrs.addFlashAttribute("cancelError", "Only published adventures can be cancelled.");
+            return "redirect:/adventures/" + id;
+        }
+
+        // Dirty-check: Hibernate emits the UPDATE on transaction commit
+        adventure.setStatus(AdventureStatus.CANCELLED);
+
+        // Notify every accepted participant in a single batch query
+        List<JoinRequest> accepted = joinRequestRepository
+                .findByAdventureWithRequester(adventure)
+                .stream()
+                .filter(jr -> jr.getStatus() == JoinRequestStatus.ACCEPTED)
+                .toList();
+
+        for (JoinRequest jr : accepted) {
+            notificationService.notifyUser(
+                    jr.getRequester().getId(),
+                    "Adventure Cancelled",
+                    "The host cancelled \"" + adventure.getTitle() + "\".",
+                    NotificationType.ADVENTURE_CANCELLED,
+                    "/adventures/" + id
+            );
+        }
+
+        log.info("cancelAdventure: id={} host={} notified={} participants",
+                id, principal.getId(), accepted.size());
+
+        redirectAttrs.addFlashAttribute("cancelSuccess",
+                "Adventure cancelled. " + accepted.size() + " participant(s) notified.");
+        return "redirect:/my-adventures";
     }
 
     // ── Shared model data for the form view ────────────────────────────────────
